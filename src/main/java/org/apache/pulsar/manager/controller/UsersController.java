@@ -298,4 +298,51 @@ public class UsersController {
         result.put("message", "Add super user success, please login");
         return ResponseEntity.ok(result);
     }
+
+    @ApiOperation(value = "Add a super read only user, only used when the platform is initialized for the first time.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "ok"),
+            @ApiResponse(code = 404, message = "Not found"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
+    @RequestMapping(value = "/users/readonlyuser", method = RequestMethod.PUT)
+    public ResponseEntity<Map<String, Object>> createSuperReadOnlyUser(@RequestBody UserInfoEntity userInfoEntity) {
+        Map<String, Object> result = Maps.newHashMap();
+        // 2 is super read only role
+        Optional<RoleInfoEntity> roleInfoEntityOptional = rolesRepository.findByRoleFlag(2);
+        if (roleInfoEntityOptional.isPresent()) {
+            result.put("error", "Super Read only user role is exist, this interface is no longer available");
+            return ResponseEntity.ok(result);
+        }
+        Map<String, String> userValidateResult = usersService.validateUserInfo(userInfoEntity);
+        if (userValidateResult.get("error") != null) {
+            result.put("error", userValidateResult.get("error"));
+            return ResponseEntity.ok(result);
+        }
+        if (StringUtils.isBlank(userInfoEntity.getPassword())) {
+            result.put("error", "Please provider password");
+            return ResponseEntity.ok(result);
+        }
+
+        RoleInfoEntity roleInfoEntity = new RoleInfoEntity();
+        roleInfoEntity.setRoleName(userInfoEntity.getName());
+        roleInfoEntity.setResourceId(0);
+        roleInfoEntity.setRoleSource(roleInfoEntity.getRoleName());
+        roleInfoEntity.setResourceType(ResourceType.ALL.name());
+        roleInfoEntity.setResourceName("superuser");
+        roleInfoEntity.setResourceVerbs(ResourceVerbs.SUPER_USER.name());
+        roleInfoEntity.setFlag(2);
+        roleInfoEntity.setDescription("This is super role");
+        long roleId = rolesRepository.save(roleInfoEntity);
+        userInfoEntity.setPassword(DigestUtils.sha256Hex(userInfoEntity.getPassword()));
+        long userId = usersRepository.save(userInfoEntity);
+        RoleBindingEntity roleBindingEntity = new RoleBindingEntity();
+        roleBindingEntity.setDescription("This is super role binding");
+        roleBindingEntity.setName("super_user_role_binding");
+        roleBindingEntity.setRoleId(roleId);
+        roleBindingEntity.setUserId(userId);
+        roleBindingRepository.save(roleBindingEntity);
+        result.put("message", "Add super read only user success, please login");
+        return ResponseEntity.ok(result);
+    }
 }

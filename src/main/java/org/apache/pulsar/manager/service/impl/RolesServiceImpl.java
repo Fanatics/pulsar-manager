@@ -261,7 +261,7 @@ public class RolesServiceImpl implements RolesService {
         return result;
     }
 
-    public boolean isSuperUser(String token) {
+    public boolean checkSuperUser(String token, int flag) {
         if (!userManagementEnabled) {
             HttpServletRequest request = requireNonNull((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
             String serverToken = jwtService.getToken(request.getSession().getId());
@@ -279,10 +279,18 @@ public class RolesServiceImpl implements RolesService {
         }
         List<RoleInfoEntity> roleInfoEntities = rolesRepository.findAllRolesByMultiId(roleIdList);
         for (RoleInfoEntity roleInfoEntity : roleInfoEntities) {
-            if (roleInfoEntity.getFlag() == 0) {
+            if (roleInfoEntity.getFlag() == flag) {
                 return true;
             }
         }
         return false;
+    }
+
+    public boolean isSuperUser(String token) {
+        return checkSuperUser(token, 0);
+    }
+
+    public boolean isSuperReadOnlyUser(String token) {
+        return checkSuperUser(token, 2);
     }
 }
