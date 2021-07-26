@@ -81,6 +81,8 @@ public class UsersController {
 
     private final HttpServletRequest request;
 
+    private static final int READ_ONLY_FLAG = 2;
+
     @Autowired
     public UsersController(
             UsersRepository usersRepository,
@@ -228,12 +230,13 @@ public class UsersController {
             }
             List<RoleInfoEntity> roleInfoEntities = rolesRepository.findAllRolesByMultiId(roleIdList);
             for (RoleInfoEntity roleInfoEntity : roleInfoEntities) {
-                if (roleInfoEntity.getFlag() == 0) {
+                if (roleInfoEntity.getFlag() == 0 || roleInfoEntity.getFlag() == 2) {
                     result.put("message", "Get user info success");
                     result.put("userName", userInfoEntity.getName());
                     result.put("description", userInfoEntity.getDescription());
                     roles.add("super");
                     result.put("roles", roles);
+                    result.put("permission", roleInfoEntity.getFlag() == 2 ? "readonly" : "admin");
                     return ResponseEntity.ok(result);
                 }
             }
@@ -309,7 +312,7 @@ public class UsersController {
     public ResponseEntity<Map<String, Object>> createSuperReadOnlyUser(@RequestBody UserInfoEntity userInfoEntity) {
         Map<String, Object> result = Maps.newHashMap();
         // 2 is super read only role
-        Optional<RoleInfoEntity> roleInfoEntityOptional = rolesRepository.findByRoleFlag(2);
+        Optional<RoleInfoEntity> roleInfoEntityOptional = rolesRepository.findByRoleFlag(READ_ONLY_FLAG);
         if (roleInfoEntityOptional.isPresent()) {
             result.put("error", "Super Read only user role is exist, this interface is no longer available");
             return ResponseEntity.ok(result);
@@ -331,8 +334,8 @@ public class UsersController {
         roleInfoEntity.setResourceType(ResourceType.ALL.name());
         roleInfoEntity.setResourceName("superuser");
         roleInfoEntity.setResourceVerbs(ResourceVerbs.SUPER_USER.name());
-        roleInfoEntity.setFlag(2);
-        roleInfoEntity.setDescription("This is super role");
+        roleInfoEntity.setFlag(READ_ONLY_FLAG);
+        roleInfoEntity.setDescription("This is super user readonly role");
         long roleId = rolesRepository.save(roleInfoEntity);
         userInfoEntity.setPassword(DigestUtils.sha256Hex(userInfoEntity.getPassword()));
         long userId = usersRepository.save(userInfoEntity);

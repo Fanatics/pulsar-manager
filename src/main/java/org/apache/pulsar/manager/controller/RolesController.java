@@ -118,6 +118,10 @@ public class RolesController {
             @RequestBody RoleInfoEntity roleInfoEntity) {
         String token = request.getHeader("token");
         Map<String, Object> result = Maps.newHashMap();
+        if (!rolesService.isSuperUser(token)) {
+            result.put("error", "User does not have permission to operate");
+            return ResponseEntity.ok(result);
+        }
         String tenant = request.getHeader("tenant");
         Map<String, String> validateResult = rolesService.validateCurrentTenant(token, tenant);
         if (validateResult.get("error") != null) {
@@ -160,6 +164,10 @@ public class RolesController {
         Map<String, Object> result = Maps.newHashMap();
         String token = request.getHeader("token");
         String tenant = request.getHeader("tenant");
+        if (!rolesService.isSuperUser(token)) {
+            result.put("error", "User does not have permission to operate");
+            return ResponseEntity.ok(result);
+        }
         Map<String, String> validateResult = rolesService.validateCurrentTenant(token, tenant);
         if (validateResult.get("error") != null) {
             result.put("error", validateResult.get("error"));
@@ -200,6 +208,10 @@ public class RolesController {
     public ResponseEntity<Map<String, Object>> deleteRole(@RequestBody RoleInfoEntity roleInfoEntity) {
         Map<String, Object> result = Maps.newHashMap();
         String token = request.getHeader("token");
+        if (!rolesService.isSuperUser(token)) {
+            result.put("error", "User does not have permission to operate");
+            return ResponseEntity.ok(result);
+        }
         String tenant = request.getHeader("tenant");
         Map<String, String> validateResult = rolesService.validateCurrentTenant(token, tenant);
         if (validateResult.get("error") != null) {

@@ -118,7 +118,7 @@
           style="width: 200px;"
           @keyup.enter.native="handlePolicyFilter"/>
         <el-button type="primary" icon="el-icon-search" @click="handlePolicyFilter"/>
-        <el-button type="primary" icon="el-icon-plus" @click="handleCreatePolicy">{{ $t('ip.newIp') }}</el-button>
+        <el-button v-if="isAdminUser()" type="primary" icon="el-icon-plus" @click="handleCreatePolicy">{{ $t('ip.newIp') }}</el-button>
         <el-row :gutter="24">
           <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 24}" :lg="{span: 24}" :xl="{span: 24}">
             <el-table
@@ -145,7 +145,7 @@
                   <span>{{ scope.row.numberOfSecondaryBrokers }}</span>
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('table.actions')" align="center" width="240" class-name="small-padding fixed-width">
+              <el-table-column v-if="isAdminUser()" :label="$t('table.actions')" align="center" width="240" class-name="small-padding fixed-width">
                 <template slot-scope="scope">
                   <router-link :to="'/management/clusters/' + scope.row.cluster + '/' + scope.row.isolationPolicy + '/namespaceIsolationPolicy'">
                     <el-button type="primary" size="mini">{{ $t('table.edit') }}</el-button>
@@ -164,7 +164,7 @@
           style="width: 200px;"
           @keyup.enter.native="handleFailureDomainFilter"/>
         <el-button type="primary" icon="el-icon-search" @click="handleFailureDomainFilter"/>
-        <el-button type="primary" icon="el-icon-plus" @click="newFailureDomain">{{ $t('fd.newFd') }}</el-button>
+        <el-button v-if="isAdminUser()" type="primary" icon="el-icon-plus" @click="newFailureDomain">{{ $t('fd.newFd') }}</el-button>
         <el-table
           :data="failureDomainList"
           border
@@ -181,7 +181,7 @@
               <span>{{ scope.row.brokers }}</span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('table.actions')" align="center" class-name="small-padding fixed-width">
+          <el-table-column v-if="isAdminUser()" :label="$t('table.actions')" align="center" class-name="small-padding fixed-width">
             <template slot-scope="scope">
               <router-link :to="'/management/clusters/' + scope.row.cluster + '/' + scope.row.domain + '/failureDomainName'">
                 <el-button type="primary" size="mini">{{ $t('table.edit') }}</el-button>
@@ -207,13 +207,13 @@
               <el-form-item :label="$t('cluster.brokerServiceUrlTlsPrefix')" prop="brokerServiceUrlTls">
                 <el-input v-model="form.brokerServiceUrlTls" placeholder="pulsar+ssl://"/>
               </el-form-item>
-              <el-button type="primary" class="button" @click="handleServiceUrl">{{ $t('cluster.updateCluster') }}</el-button>
+              <el-button v-if="isAdminUser()" type="primary" class="button" @click="handleServiceUrl">{{ $t('cluster.updateCluster') }}</el-button>
             </el-form>
           </el-col>
         </el-row>
-        <h4 style="color:#E57470">{{ $t('common.dangerZone') }}</h4>
-        <hr class="danger-line">
-        <el-button type="danger" class="button" @click="handleDelete">{{ $t('cluster.deleteCluster') }}</el-button>
+        <h4 v-if="isAdminUser()" style="color:#E57470">{{ $t('common.dangerZone') }}</h4>
+        <hr v-if="isAdminUser()" class="danger-line">
+        <el-button v-if="isAdminUser()" type="danger" class="button" @click="handleDelete">{{ $t('cluster.deleteCluster') }}</el-button>
       </el-tab-pane>
     </el-tabs>
     <el-dialog :visible.sync="dialogFormVisible" :title="textMap[dialogStatus]" width="30%">
@@ -236,7 +236,7 @@
             <el-button @click="dialogFormVisible = false">{{ $t('table.cancel') }}</el-button>
           </el-form-item>
         </div>
-        <div v-if="dialogStatus==='deleteCluster'">
+        <div v-if="dialogStatus==='deleteCluster' && isAdminUser()">
           <el-form-item>
             <h4>{{ deleteClusterMessage }}</h4>
           </el-form-item>
@@ -245,7 +245,7 @@
             <el-button @click="dialogFormVisible = false">{{ $t('table.cancel') }}</el-button>
           </el-form-item>
         </div>
-        <div v-if="dialogStatus==='deleteDomain'">
+        <div v-if="dialogStatus==='deleteDomain' && isAdminUser()">
           <el-form-item>
             <h4>{{ deleteFdMessage }}</h4>
           </el-form-item>
@@ -254,7 +254,7 @@
             <el-button @click="dialogFormVisible = false">{{ $t('table.cancel') }}</el-button>
           </el-form-item>
         </div>
-        <div v-if="dialogStatus==='deletePolicy'">
+        <div v-if="dialogStatus==='deletePolicy' && isAdminUser()">
           <el-form-item>
             <h4>{{ deletePolicyMessage }}</h4>
           </el-form-item>
@@ -300,6 +300,7 @@ export default {
   },
   data() {
     return {
+      readOnly: this.$store.state.user.permission,
       postForm: Object.assign({}, defaultForm),
       localList: [],
       listQuery: {
@@ -378,6 +379,9 @@ export default {
     this.getBookiesList()
   },
   methods: {
+    isAdminUser() {
+      return this.$store.state.user.permission === 'admin'
+    },
     getBookiesList() {
       getBookiesList(this.postForm.cluster).then(response => {
         if (response.data.enableBookieHttp) {

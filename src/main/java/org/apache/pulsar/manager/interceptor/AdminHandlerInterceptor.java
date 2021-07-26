@@ -105,6 +105,10 @@ public class AdminHandlerInterceptor extends HandlerInterceptorAdapter {
             }
         }
         if (!rolesService.isSuperUser(token)) {
+            if(rolesService.isSuperReadOnlyUser(token) && request.getMethod().equals("GET")) {
+                return true;
+            }
+
             if (requestUri.startsWith("/admin/v2/clusters")
                     || requestUri.startsWith("/admin/v2/brokers")) {
                 map.put("message", "This user no permissions for this resource");

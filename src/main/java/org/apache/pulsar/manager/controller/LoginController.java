@@ -123,7 +123,7 @@ public class LoginController {
             if (!roleIdList.isEmpty()) {
                 List<RoleInfoEntity> roleInfoEntities = rolesRepository.findAllRolesByMultiId(roleIdList);
                 for (RoleInfoEntity roleInfoEntity : roleInfoEntities) {
-                    if (roleInfoEntity.getFlag() == 0) {
+                    if (roleInfoEntity.getFlag() == 0 || roleInfoEntity.getFlag() == 2) {
                         // Super users can access all types
                         return new ResponseEntity<>(result, headers, HttpStatus.OK);
                     }

@@ -15,7 +15,7 @@
 -->
 <template>
   <div class="app-container">
-    <el-button type="primary" icon="el-icon-plus" @click="handleCreateToken">{{ $t('token.buttonNewToken') }}</el-button>
+    <el-button v-if="isAdminUser()" type="primary" icon="el-icon-plus" @click="handleCreateToken">{{ $t('token.buttonNewToken') }}</el-button>
 
     <el-row :gutter="24">
       <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 24}" :lg="{span: 24}" :xl="{span: 24}" style="margin-top:15px">
@@ -42,7 +42,7 @@
               <span>{{ scope.row.description }}</span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('table.actions')" align="center" class-name="small-padding fixed-width">
+          <el-table-column v-if="isAdminUser()" :label="$t('table.actions')" align="center" class-name="small-padding fixed-width">
             <template slot-scope="scope">
               <el-button type="primary" size="mini" @click="handleUpdateToken(scope.row)">{{ $t('table.edit') }}</el-button>
               <el-button size="mini" type="danger" @click="handleDeleteToken(scope.row)">{{ $t('table.delete') }}</el-button>
@@ -124,6 +124,9 @@ export default {
     this.getTokens()
   },
   methods: {
+    isAdminUser() {
+      return this.$store.state.user.permission === 'admin'
+    },
     getTokens() {
       fetchTokens().then(response => {
         if (!response.data) return

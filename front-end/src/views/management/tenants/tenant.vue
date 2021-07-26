@@ -33,7 +33,7 @@
             style="width: 200px;"
             @keyup.enter.native="handleFilterNamespace"/>
           <el-button type="primary" icon="el-icon-search" @click="handleFilterNamespace"/>
-          <el-button type="primary" icon="el-icon-plus" @click="handleCreateNamespace">{{ $t('namespace.newNamespace') }}</el-button>
+          <el-button v-if="isAdminUser()" type="primary" icon="el-icon-plus" @click="handleCreateNamespace">{{ $t('namespace.newNamespace') }}</el-button>
         </div>
         <el-row :gutter="24">
           <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 24}" :lg="{span: 24}" :xl="{span: 24}">
@@ -84,7 +84,7 @@
                   <span>{{ scope.row.storageSize }}</span>
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('table.actions')" align="center" class-name="small-padding fixed-width">
+              <el-table-column v-if="isAdminUser()" :label="$t('table.actions')" align="center" class-name="small-padding fixed-width">
                 <template slot-scope="scope">
                   <router-link :to="'/management/namespaces/' + scope.row.tenant +'/' + scope.row.namespace + '/namespace'">
                     <el-button type="primary" size="mini">{{ $t('table.edit') }}</el-button>
@@ -113,6 +113,7 @@
               </div>
               <el-select
                 v-model="clusterValue"
+                :disabled="!isAdminUser()"
                 :placeholder="$t('cluster.selectCluster')"
                 style="width:500px;margin-top:20px"
                 multiple
@@ -139,18 +140,18 @@
                   {{ tag }}
                 </el-tag>
                 <el-input
-                  v-if="inputVisible"
+                  v-if="inputVisible && isAdminUser()"
                   ref="saveTagInput"
                   v-model="inputValue"
                   size="small"
                   class="input-new-tag"
                   @keyup.enter.native="handleInputConfirm"/>
-                <el-button v-else class="button-new-tag" size="small" icon="el-icon-plus" @click="showInput">{{ $t('tenant.newRole') }}</el-button>
+                <el-button v-else-if="isAdminUser()" class="button-new-tag" size="small" icon="el-icon-plus" @click="showInput">{{ $t('tenant.newRole') }}</el-button>
               </div>
             </div>
-            <h4 style="color:#E57470">{{ $t('common.dangerZone') }}</h4>
-            <hr class="danger-line">
-            <el-button type="danger" class="button" @click="handleDeleteTenant">{{ $t('tenant.deleteTenant') }}</el-button>
+            <h4 v-if="isAdminUser()" style="color:#E57470">{{ $t('common.dangerZone') }}</h4>
+            <hr v-if="isAdminUser()" class="danger-line">
+            <el-button v-if="isAdminUser()" type="danger" class="button" @click="handleDeleteTenant">{{ $t('tenant.deleteTenant') }}</el-button>
           </el-col>
         </el-row>
       </el-tab-pane>
@@ -250,6 +251,9 @@ export default {
     this.getTenantsInfo()
   },
   methods: {
+    isAdminUser() {
+      return this.$store.state.user.permission === 'admin'
+    },
     handleClose(tag) {
       this.dynamicRoles.splice(this.dynamicRoles.indexOf(tag), 1)
       const data = {}

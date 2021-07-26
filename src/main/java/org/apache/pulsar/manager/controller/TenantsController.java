@@ -109,7 +109,7 @@ public class TenantsController {
             Integer pageSize) {
         String token = request.getHeader("token");
         Map<String, Object> result = Maps.newHashMap();
-        if (!rolesService.isSuperUser(token)) {
+        if (!rolesService.isSuperUser(token) && !rolesService.isSuperReadOnlyUser(token)) {
             List<TenantEntity> tenantEntities = null;
             Optional<UserInfoEntity> userInfoEntityOptional = usersRepository.findByAccessToken(token);
             // There is no need to check whether the user exists again; the user must exist.

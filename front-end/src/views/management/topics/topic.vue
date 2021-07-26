@@ -64,6 +64,7 @@
                 <el-table-column :label="$t('topic.data')" prop="data"/>
               </el-table>
               <el-button
+                v-if="isAdminUser()"
                 class="filter-item"
                 type="danger"
                 style="margin-top:15px;"
@@ -92,7 +93,7 @@
                 <span class="circle-font">{{ terminateStatus }}</span>
               </el-button>
               <el-button
-                v-if="terminateStatus !== 'Terminated'"
+                v-if="terminateStatus !== 'Terminated' && isAdminUser()"
                 type="primary"
                 style="display:block;margin-top:15px;margin-left:auto;margin-right:auto;"
                 icon="el-icon-close"
@@ -100,7 +101,7 @@
                 {{ $t('topic.terminate') }}
               </el-button>
               <el-button
-                v-if="terminateStatus === 'Terminated'"
+                v-if="terminateStatus === 'Terminated' && isAdminUser()"
                 type="info"
                 style="display:block;margin-top:15px;margin-left:auto;margin-right:auto;"
                 icon="el-icon-close"
@@ -135,7 +136,7 @@
                 <span class="circle-font">{{ compaction }}</span>
               </el-button>
               <el-button
-                v-if="compaction !== 'RUNNING' && compaction !== 'ERROR'"
+                v-if="compaction !== 'RUNNING' && compaction !== 'ERROR' && isAdminUser()"
                 type="primary"
                 style="display:block;margin-top:15px;margin-left:auto;margin-right:auto;"
                 icon="el-icon-minus"
@@ -143,7 +144,7 @@
                 {{ $t('topic.compaction') }}
               </el-button>
               <el-button
-                v-if="compaction === 'ERROR'"
+                v-if="compaction === 'ERROR' && isAdminUser()"
                 type="danger"
                 style="display:block;margin-top:15px;margin-left:auto;margin-right:auto;"
                 icon="el-icon-minus"
@@ -151,7 +152,7 @@
                 {{ $t('topic.compaction') }}
               </el-button>
               <el-button
-                v-if="compaction === 'RUNNING'"
+                v-if="compaction === 'RUNNING' && isAdminUser()"
                 type="success"
                 style="display:block;margin-top:15px;margin-left:auto;margin-right:auto;"
                 icon="el-icon-minus"
@@ -188,6 +189,7 @@
               <el-row type="flex" justify="center" style="margin-top:15px;">
                 <el-col :span="16">
                   <el-button
+                    v-if="isAdminUser()"
                     :disabled="offloadDisabled"
                     type="primary"
                     icon="el-icon-refresh"
@@ -202,6 +204,7 @@
                     content="offload threshold (e.g 200k 50m 1g)"
                     placement="top-start">
                     <el-input
+                      v-if="isAdminUser()"
                       v-model="offloadThreshold"
                       :disabled="offloadDisabled"
                       style="display:block;"/>
@@ -271,6 +274,7 @@
         </el-row>
         <h4>{{ $t('topic.subscription.subscriptions') }}</h4>
         <el-button
+          v-if="isAdminUser()"
           class="filter-item"
           type="success"
           style="margin-bottom: 15px"
@@ -462,7 +466,7 @@
         </el-row>
       </el-tab-pane>
       <el-tab-pane :label="$t('tabs.policies')" name="policies">
-        <h4>{{ $t('topic.policy.authentication') }}
+        <h4 v-if="isAdminUser()">{{ $t('topic.policy.authentication') }}
           <el-tooltip :content="authorizationContent" class="item" effect="dark" placement="top">
             <i class="el-icon-info"/>
           </el-tooltip>
@@ -480,6 +484,7 @@
               <span> {{ tag }} </span>
             </div>
             <el-select
+              v-if="isAdminUser()"
               v-model="roleMap[tag]"
               multiple
               placeholder="Please Select Options"
@@ -492,11 +497,11 @@
                 :value="item.value"
                 style="width:300px"/>
             </el-select>
-            <el-button @click.prevent="handleClose(tag)">{{ $t('topic.delete') }}</el-button>
+            <el-button v-if="isAdminUser()" @click.prevent="handleClose(tag)">{{ $t('topic.delete') }}</el-button>
           </el-tag>
           <el-form-item style="margin-top:30px">
             <el-input
-              v-if="inputVisible"
+              v-if="inputVisible && isAdminUser()"
               ref="saveTagInput"
               v-model="inputValue"
               style="margin-right:10px;width:200px;vertical-align:top"
@@ -505,13 +510,13 @@
               @keyup.enter.native="handleInputConfirm"
               @blur="handleInputConfirm"
             />
-            <el-button @click="showInput()">{{ $t('topic.addRole') }}</el-button>
+            <el-button v-if="isAdminUser()" @click="showInput()">{{ $t('topic.addRole') }}</el-button>
             <!-- <el-button @click="revokeAllRole()">Revoke All</el-button> -->
           </el-form-item>
         </el-form>
-        <h4 style="color:#E57470">{{ $t('common.dangerZone') }}</h4>
-        <hr class="danger-line">
-        <el-button type="danger" class="button" @click="handleDeleteTopic">{{ $t('topic.deleteTopic') }}</el-button>
+        <h4 v-if="isAdminUser()" style="color:#E57470">{{ $t('common.dangerZone') }}</h4>
+        <hr v-if="isAdminUser()" class="danger-line">
+        <el-button v-if="isAdminUser()" type="danger" class="button" @click="handleDeleteTopic">{{ $t('topic.deleteTopic') }}</el-button>
       </el-tab-pane>
     </el-tabs>
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="30%">
@@ -707,6 +712,9 @@ export default {
     this.initPermissions()
   },
   methods: {
+    isAdminUser() {
+      return this.$store.state.user.permission === 'admin'
+    },
     onClusterChanged() {
       if (this.loaded && this.routeCluster !== this.clusterForm.cluster) {
         this.reload()
