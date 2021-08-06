@@ -15,10 +15,13 @@ package org.apache.pulsar.manager.controller;
 
 import com.github.pagehelper.Page;
 import com.google.common.collect.Maps;
+import javax.servlet.http.HttpServletRequest;
+import org.apache.logging.log4j.util.Strings;
 import org.apache.pulsar.manager.entity.BrokerTokenEntity;
 import org.apache.pulsar.manager.entity.BrokerTokensRepository;
 import org.apache.pulsar.manager.service.JwtService;
 import io.swagger.annotations.*;
+import org.apache.pulsar.manager.service.RolesService;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -40,11 +43,19 @@ public class BrokerTokensController {
 
     private final JwtService jwtService;
     private final BrokerTokensRepository brokerTokensRepository;
+    private final HttpServletRequest request;
+    private final RolesService rolesService;
 
     @Autowired
-    public BrokerTokensController(JwtService jwtService, BrokerTokensRepository brokerTokensRepository) {
+    public BrokerTokensController(HttpServletRequest request,
+        JwtService jwtService,
+        BrokerTokensRepository brokerTokensRepository,
+        RolesService rolesService
+    ) {
         this.jwtService = jwtService;
         this.brokerTokensRepository = brokerTokensRepository;
+        this.request = request;
+        this.rolesService = rolesService;
     }
 
     @ApiOperation(value = "Get the list of existing broker tokens, support paging, the default is 10 per page")
@@ -76,13 +87,19 @@ public class BrokerTokensController {
     })
     @RequestMapping(value = "/tokens/token", method = RequestMethod.PUT)
     public ResponseEntity<Map<String, Object>> addBrokerToken(@RequestBody BrokerTokenEntity brokerTokenEntity) {
-        Optional<BrokerTokenEntity> optionalBrokerTokenEntity = brokerTokensRepository.findTokenByRole(brokerTokenEntity.getRole());
+        String token = request.getHeader("token");
         Map<String, Object> result = Maps.newHashMap();
+        if(Strings.isNotBlank(token) && !rolesService.isSuperUser(token)) {
+            result.put("error", "User does not have permission to operate");
+            return ResponseEntity.ok(result);
+        }
+
+        Optional<BrokerTokenEntity> optionalBrokerTokenEntity = brokerTokensRepository.findTokenByRole(brokerTokenEntity.getRole());
         if (optionalBrokerTokenEntity.isPresent()) {
             result.put("error", "Role is exist");
             return ResponseEntity.ok(result);
         }
-        String token = jwtService.createBrokerToken(brokerTokenEntity.getRole(), null);
+        token = jwtService.createBrokerToken(brokerTokenEntity.getRole(), null);
         if (token == null) {
             result.put("error", "Token generate failed");
             return ResponseEntity.ok(result);
@@ -109,6 +126,12 @@ public class BrokerTokensController {
     public ResponseEntity<Map<String, Object>> updateBrokerToken(@RequestBody BrokerTokenEntity brokerTokenEntity) {
         Optional<BrokerTokenEntity> optionalBrokerTokenEntity = brokerTokensRepository.findTokenByRole(brokerTokenEntity.getRole());
         Map<String, Object> result = Maps.newHashMap();
+        String token = request.getHeader("token");
+        if(Strings.isNotBlank(token) && !rolesService.isSuperUser(token)) {
+            result.put("error", "User does not have permission to operate");
+            return ResponseEntity.ok(result);
+        }
+
         if (!optionalBrokerTokenEntity.isPresent()) {
             result.put("error", "Role is not exist");
             return ResponseEntity.ok(result);
@@ -150,6 +173,11 @@ public class BrokerTokensController {
     public ResponseEntity<Map<String, Object>> deleteBrokerToken(@PathVariable String role) {
         Optional<BrokerTokenEntity> optionalBrokerTokenEntity = brokerTokensRepository.findTokenByRole(role);
         Map<String, Object> result = Maps.newHashMap();
+        String token = request.getHeader("token");
+        if(Strings.isNotBlank(token) && !rolesService.isSuperUser(token)) {
+            result.put("error", "User does not have permission to operate");
+            return ResponseEntity.ok(result);
+        }
         if (!optionalBrokerTokenEntity.isPresent()) {
             result.put("error", "Token not find");
             return ResponseEntity.ok(result);

@@ -30,6 +30,7 @@ const user = {
     avatar: '',
     introduction: '',
     roles: [],
+    permission: undefined,
     setting: {
       articlePlatform: []
     }
@@ -59,6 +60,9 @@ const user = {
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
+    },
+    SET_USER_PERMISSION: (state, permission) => {
+      state.permission = permission
     }
   },
 
@@ -66,23 +70,28 @@ const user = {
     LoginByUsername({ commit }, userInfo) {
       const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
-        loginByUsername(username, userInfo.password).then(response => {
-          if (response.data.hasOwnProperty('error') && response.data.error.length >= 0) {
-            Message({
-              message: 'The username or password is incorrect',
-              type: 'error',
-              duration: 5 * 1000
-            })
-            reject('login error')
-          }
-          commit('SET_TOKEN', response.headers.token)
-          setToken(response.headers.token)
-          setName(response.headers.username)
-          setTenant(response.headers.tenant)
-          resolve()
-        }).catch(error => {
-          reject(error)
-        })
+        loginByUsername(username, userInfo.password)
+          .then(response => {
+            if (
+              response.data.hasOwnProperty('error') &&
+              response.data.error.length >= 0
+            ) {
+              Message({
+                message: 'The username or password is incorrect',
+                type: 'error',
+                duration: 5 * 1000
+              })
+              reject('login error')
+            }
+            commit('SET_TOKEN', response.headers.token)
+            setToken(response.headers.token)
+            setName(response.headers.username)
+            setTenant(response.headers.tenant)
+            resolve()
+          })
+          .catch(error => {
+            reject(error)
+          })
       })
     },
 
@@ -91,7 +100,8 @@ const user = {
       return new Promise((resolve, reject) => {
         getUserInfo().then(response => {
           commit('SET_ROLES', response.data.roles)
-          commit('SET_NAME', 'admin')
+          commit('SET_USER_PERMISSION', response.data.permission)
+          commit('SET_NAME', response.data.userName)
           commit('SET_INTRODUCTION', 'Pulsar Manager')
           resolve(response)
         })
@@ -101,18 +111,20 @@ const user = {
     // 登出
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {
-        logout(state.token).then(() => {
-          commit('SET_TOKEN', '')
-          commit('SET_ROLES', [])
-          removeToken()
-          removeCsrfToken()
-          removeName()
-          removeTenant()
-          removeEnvironment()
-          resolve()
-        }).catch(error => {
-          reject(error)
-        })
+        logout(state.token)
+          .then(() => {
+            commit('SET_TOKEN', '')
+            commit('SET_ROLES', [])
+            removeToken()
+            removeCsrfToken()
+            removeName()
+            removeTenant()
+            removeEnvironment()
+            resolve()
+          })
+          .catch(error => {
+            reject(error)
+          })
       })
     },
 

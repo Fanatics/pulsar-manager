@@ -60,7 +60,7 @@
         <hr class="split-line">
         <el-tabs v-model="activeBundleCluster" type="border-card" @tab-click="handleBundleTabClick">
           <el-tab-pane v-for="(item,index) in replicationClustersValue" :key="item+index" :label="item" :name="item">
-            <div class="filter-container">
+            <div v-if="isAdminUser()" class="filter-container">
               <el-button class="filter-item" style="margin-left: 10px;" type="danger" icon="el-icon-download" @click="handleUnloadAll">Unload All</el-button>
               <el-button class="filter-item" style="margin-left: 10px;" type="danger" icon="el-icon-close" @click="hanldeClearAllBacklog">Clear All Backlog</el-button>
             </div>
@@ -76,7 +76,7 @@
                   <span>{{ scope.row.bundle }}</span>
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('namespace.bundle.operation')" align="center" class-name="small-padding fixed-width">
+              <el-table-column v-if="isAdminUser()" :label="$t('namespace.bundle.operation')" align="center" class-name="small-padding fixed-width">
                 <template slot-scope="scope">
                   <el-button size="medium" style="margin-left: 10px;" type="danger" icon="el-icon-share" @click="handleSplitBundle(scope.row)">{{ $t('namespace.bundle.split') }}</el-button>
                   <el-button size="medium" style="margin-left: 10px;" type="danger" icon="el-icon-download" @click="handleUnloadBundle(scope.row)">{{ $t('namespace.bundle.unload') }}</el-button>
@@ -92,7 +92,7 @@
       <el-tab-pane :label="$t('tabs.topic')" name="topics">
         <el-input v-model="searchTopic" :placeholder="$t('namespace.searchTopics')" style="width: 200px;" @keyup.enter.native="handleFilterTopic"/>
         <el-button type="primary" icon="el-icon-search" @click="handleFilterTopic"/>
-        <el-button type="primary" icon="el-icon-plus" @click="handleCreateTopic">{{ $t('namespace.newTopic') }}</el-button>
+        <el-button v-if="isAdminUser()" type="primary" icon="el-icon-plus" @click="handleCreateTopic">{{ $t('namespace.newTopic') }}</el-button>
         <el-row :gutter="24">
           <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 24}" :lg="{span: 24}" :xl="{span: 24}" style="margin-top:15px">
             <el-table
@@ -171,6 +171,7 @@
           </div>
           <el-select
             v-model="replicationClustersValue"
+            :disabled="!isAdminUser()"
             :placeholder="$t('cluster.selectClusterMessage')"
             style="width:500px;margin-top:20px"
             multiple
@@ -178,13 +179,13 @@
             <el-option v-for="item in replicationClustersOptions" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </div>
-        <h4>{{ $t('namespace.policy.authorization') }}
+        <h4 v-if="isAdminUser()" > {{ $t('namespace.policy.authorization') }}
           <el-tooltip :content="authorizationContent" class="item" effect="dark" placement="top">
             <i class="el-icon-info"/>
           </el-tooltip>
         </h4>
-        <hr class="split-line">
-        <el-form>
+        <hr v-if="isAdminUser()" class="split-line">
+        <el-form v-if="isAdminUser()">
           <el-tag
             v-for="tag in dynamicTags"
             :label="tag"
@@ -248,6 +249,7 @@
           </el-tooltip>
         </div>
         <el-select
+          :disabled="!isAdminUser()"
           v-model="subscriptionAuthenticationMode"
           placeholder="Please select Authentication"
           style="margin-top:20px;width:300px"
@@ -279,6 +281,7 @@
             <span>{{ $t('namespace.policy.ensembleSize') }}</span>
             <md-input
               v-model="form.ensembleSize"
+              :disabled="!isAdminUser()"
               :placeholder="$t('namespace.policy.inputEnsemble')"
               class="md-input-style"
               name="ensembleSize"
@@ -288,6 +291,7 @@
             <span>{{ $t('namespace.policy.writeQuorumSize') }}</span>
             <md-input
               v-model="form.writeQuorumSize"
+              :disabled="!isAdminUser()"
               :placeholder="$t('namespace.policy.inputWriteQuorumSize')"
               class="md-input-style"
               name="writeQuorumSize"
@@ -297,6 +301,7 @@
             <span>{{ $t('namespace.policy.readQuorumSize') }}</span>
             <md-input
               v-model="form.readQuorumSize"
+              :disabled="!isAdminUser()"
               :placeholder="$t('namespace.policy.inputReadQuorumSize')"
               class="md-input-style"
               name="readQuorumSize"
@@ -311,6 +316,7 @@
             </el-tooltip>
             <md-input
               v-model="form.markDeleteMaxRate"
+              :disabled="!isAdminUser()"
               :placeholder="$t('namespace.policy.inputDeleteMaxRate')"
               class="md-input-style"
               name="markDeleteMaxRate"
@@ -326,6 +332,7 @@
             <br>
             <el-radio-group
               v-model="form.encryptionRequireRadio"
+              :disabled="!isAdminUser()"
               size="medium"
               style="margin-top:8px;width:300px"
               @change="handleEncryption()">
@@ -341,6 +348,7 @@
             <br>
             <el-radio-group
               v-model="form.deduplicationRadio"
+              :disabled="!isAdminUser()"
               size="medium"
               style="margin-top:8px;width:300px"
               @change="handleDeduplication()">
@@ -360,6 +368,7 @@
             <md-input
               v-model="form.backlogQuotasLimit"
               :placeholder="$t('namespace.policy.inputBacklogQuotasLimit')"
+              :disabled="!isAdminUser()"
               class="md-input-style"
               name="backlogQuotasLimit"
               @keyup.enter.native="handleBacklogQuota"/>
@@ -384,6 +393,7 @@
             <el-select
               v-model="form.backlogRententionPolicy"
               :placeholder="$t('namespace.policy.inputBacklogRententionPolicyContent')"
+              :disabled="!isAdminUser()"
               style="margin-top:8px;width:400px"
               @change="handleBacklogQuota()">
               <el-option
@@ -417,6 +427,7 @@
             <el-select
               v-model="form.autoUpdateStrategy"
               :placeholder="$t('namespace.policy.inputAutoUpdateStrategy')"
+              :disabled="!isAdminUser()"
               style="margin-top:8px;width:300px"
               @change="handleSchemaAutoUpdateStrategy()">
               <el-option
@@ -434,6 +445,7 @@
             <br>
             <el-radio-group
               v-model="form.schemaValidationEnforcedRadio"
+              :disabled="!isAdminUser()"
               size="medium"
               style="margin-top:8px;width:300px"
               @change="handleSchemaValidationEnforced()">
@@ -453,6 +465,7 @@
             <md-input
               v-model="form.messageTTL"
               :placeholder="$t('namespace.policy.inputMessageTTL')"
+              :disabled="!isAdminUser()"
               class="md-input-style"
               name="messageTTL"
               @keyup.enter.native="handleMessageTTL"/>
@@ -467,6 +480,7 @@
             <md-input
               v-model="form.retentionSize"
               :placeholder="$t('namespace.policy.inputRententionSize')"
+              :disabled="!isAdminUser()"
               class="md-input-style"
               name="retentionSize"
               @keyup.enter.native="handleRetention"/>
@@ -479,6 +493,7 @@
             <md-input
               v-model="form.retentionTime"
               :placeholder="$t('namespace.policy.inputRetentionTime')"
+              :disabled="!isAdminUser()"
               class="md-input-style"
               name="retentionTime"
               @keyup.enter.native="handleRetention"/>
@@ -493,6 +508,7 @@
             <md-input
               v-model="form.compactionThreshold"
               :placeholder="$t('namespace.policy.inputCompactionThreshold')"
+              :disabled="!isAdminUser()"
               class="md-input-style"
               name="compactionThreshold"
               @keyup.enter.native="handleCompactionThreshold"/>
@@ -507,6 +523,7 @@
             <md-input
               v-model="form.offloadThreshold"
               :placeholder="$t('namespace.policy.inputOffloadThreshold')"
+              :disabled="!isAdminUser()"
               class="md-input-style"
               name="offloadThreshold"
               @keyup.enter.native="handleOffloadThreshold"/>
@@ -519,6 +536,7 @@
             <md-input
               v-model="form.offloadDeletionLag"
               :placeholder="$t('namespace.policy.inputOffloadDeleteLag')"
+              :disabled="!isAdminUser()"
               class="md-input-style"
               name="offloadDeletionLag"
               @keyup.enter.native="handleOffloadDeletionLag"/>
@@ -535,6 +553,7 @@
             <md-input
               v-model="form.maxProducersPerTopic"
               :placeholder="$t('namespace.policy.inputMaxProducersPerTopic')"
+              :disabled="!isAdminUser()"
               class="md-input-style"
               name="maxProducersPerTopic"
               @keyup.enter.native="handleMaxProducersPerTopic"/>
@@ -547,6 +566,7 @@
             <md-input
               v-model="form.maxConsumersPerTopic"
               :placeholder="$t('namespace.policy.inputMaxConsumersForTopic')"
+              :disabled="!isAdminUser()"
               class="md-input-style"
               name="maxConsumersPerTopic"
               @keyup.enter.native="handleMaxConsumersPerTopic"/>
@@ -561,6 +581,7 @@
             <md-input
               v-model="form.maxConsumerPerSub"
               :placeholder="$t('namespace.policy.inputMaxConsumersForSub')"
+              :disabled="!isAdminUser()"
               class="md-input-style"
               name="maxConsumerPerSub"
               @keyup.enter.native="handleMaxConsuemrsPerSubscription"/>
@@ -578,6 +599,7 @@
             <md-input
               v-model="form.dispatchRatePerTopicBytes"
               :placeholder="$t('namespace.policy.inputDispatchRateBytes')"
+              :disabled="!isAdminUser()"
               class="md-input-style"
               name="dispatchRatePerTopicBytes"
               @keyup.enter.native="handleDispatchRatePerTopic"/>
@@ -587,6 +609,7 @@
             <md-input
               v-model="form.dispatchRatePerTopicMessage"
               :placeholder="$t('namespace.policy.inputDispatchRatePerTopicMessage')"
+              :disabled="!isAdminUser()"
               class="md-input-style"
               name="dispatchRatePerTopicMessage"
               @keyup.enter.native="handleDispatchRatePerTopic"/>
@@ -596,6 +619,7 @@
             <md-input
               v-model="form.dispatchRatePerTopicPeriod"
               :placeholder="$t('namespace.policy.inputDispatchPerTopicPerPeriod')"
+              :disabled="!isAdminUser()"
               class="md-input-style"
               name="dispatchRatePerTopicPeriod"
               @keyup.enter.native="handleDispatchRatePerTopic"/>
@@ -611,6 +635,7 @@
             <md-input
               v-model="form.dispatchRatePerSubBytes"
               :placeholder="$t('namespace.policy.inputDispatchRatePerSubBytes')"
+              :disabled="!isAdminUser()"
               class="md-input-style"
               name="dispatchRatePerSubBytes"
               @keyup.enter.native="handleDispatchRatePerSub"/>
@@ -620,6 +645,7 @@
             <md-input
               v-model="form.dispatchRatePerSubMessage"
               :placeholder="$t('namespace.policy.inputDispatchRatePerSubMessage')"
+              :disabled="!isAdminUser()"
               class="md-input-style"
               name="dispatchRatePerSubMessage"
               @keyup.enter.native="handleDispatchRatePerSub"/>
@@ -629,6 +655,7 @@
             <md-input
               v-model="form.dispatchRatePerSubPeriod"
               :placeholder="$t('namespace.policy.inputDispatchRatePerSubPeriod')"
+              :disabled="!isAdminUser()"
               class="md-input-style"
               name="dispatchRatePerSubPeriod"
               @keyup.enter.native="handleDispatchRatePerSub"/>
@@ -644,6 +671,7 @@
             <md-input
               v-model="form.subscribeRatePerConsumerSub"
               :placeholder="$t('namespace.policy.inputSubscribeRate')"
+              :disabled="!isAdminUser()"
               class="md-input-style"
               name="subscribeRatePerConsumerSub"
               @keyup.enter.native="handleSubscribeRate"/>
@@ -653,6 +681,7 @@
             <md-input
               v-model="form.subscribeRatePerConsumerPeriod"
               :placeholder="$t('namespace.policy.inputSubscribeRate')"
+              :disabled="!isAdminUser()"
               class="md-input-style"
               name="subscribeRatePerConsumerPeriod"
               @keyup.enter.native="handleSubscribeRate"/>
@@ -669,14 +698,15 @@
             <md-input
               v-model="form.antiAffinityGroup"
               :placeholder="$t('namespace.policy.inputAntiAffinityGroup')"
+              :disabled="!isAdminUser()"
               class="md-input-style"
               name="antiAffinityGroup"
               @keyup.enter.native="handleAntiAffinityGroup"/>
           </el-form-item>
         </el-form>
-        <h4 style="color:#E57470">{{ $t('common.dangerZone') }}</h4>
-        <hr class="danger-line">
-        <el-button type="danger" class="button" @click="handleDeleteNamespace">{{ $t('namespace.deleteNamespace') }}</el-button>
+        <h4 v-if="isAdminUser()" style="color:#E57470">{{ $t('common.dangerZone') }}</h4>
+        <hr v-if="isAdminUser()" class="danger-line">
+        <el-button v-if="isAdminUser()" type="danger" class="button" @click="handleDeleteNamespace">{{ $t('namespace.deleteNamespace') }}</el-button>
       </el-tab-pane>
     </el-tabs>
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="30%">
@@ -685,6 +715,7 @@
           <el-form-item :label="$t('topic.topicDomain')">
             <el-radio-group
               v-model="form.isPersistent"
+              :disabled="!isAdminUser()"
               size="medium">
               <el-radio :label="$t('topic.persistent')"/>
               <el-radio :label="$t('topic.nonPersistent')"/>
@@ -696,7 +727,7 @@
           <el-form-item :label="$t('topic.partitions')" prop="partition">
             <el-input v-model="form.partitions"/>
           </el-form-item>
-          <el-form-item>
+          <el-form-item v-if="isAdminUser()">
             <el-button type="primary" @click="createTopic()">{{ $t('table.confirm') }}</el-button>
             <el-button @click="dialogFormVisible = false">{{ $t('table.cancel') }}</el-button>
           </el-form-item>
@@ -969,6 +1000,9 @@ export default {
     this.activeBundleCluster = this.replicationClustersValue.length > 0 ? this.replicationClustersValue[0] : ''
   },
   methods: {
+    isAdminUser() {
+      return this.$store.state.user.permission === 'admin'
+    },
     getNamespaceStats() {
       fetchNamespaceStats(this.postForm.tenant, this.postForm.namespace).then(response => {
         if (!response.data) return

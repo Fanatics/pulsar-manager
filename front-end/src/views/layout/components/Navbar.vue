@@ -44,7 +44,7 @@
 
       <el-dropdown class="avatar-container right-menu-item" trigger="click">
         <span class="avatar-wrapper">
-          Admin<i class="el-icon-arrow-down el-icon--right"/>
+          {{ this.$store.state.user.name }}<i class="el-icon-arrow-down el-icon--right"/>
         </span>
         <el-dropdown-menu slot="dropdown">
           <a target="_blank" href="https://github.com/apache/pulsar">

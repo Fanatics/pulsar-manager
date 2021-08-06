@@ -86,7 +86,7 @@ public class RoleBindingController {
                 RequestContextHolder.getRequestAttributes()).getRequest();
         String token = request.getHeader("token");
         String tenant = request.getHeader("tenant");
-        if (rolesService.isSuperUser(token)) {
+        if (rolesService.isSuperUser(token) || rolesService.isSuperReadOnlyUser(token)) {
             List<Map<String, Object>> roleBindingList = roleBindingService.getAllRoleBindingList();
             result.put("total", roleBindingList.size());
             result.put("data", roleBindingList);
@@ -119,6 +119,10 @@ public class RoleBindingController {
                 RequestContextHolder.getRequestAttributes()).getRequest();
         String token = request.getHeader("token");
         String tenant = request.getHeader("tenant");
+        if (!rolesService.isSuperUser(token)) {
+            result.put("error", "User does not have permission to operate");
+            return ResponseEntity.ok(result);
+        }
         Map<String, Object> validateResult = roleBindingService.validateCreateRoleBinding(
                 token, tenant, roleName, userName);
         if (validateResult.get("error") != null) {
@@ -152,6 +156,10 @@ public class RoleBindingController {
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.getRequestAttributes()).getRequest();
         String token = request.getHeader("token");
+        if (!rolesService.isSuperUser(token)) {
+            result.put("error", "User does not have permission to operate");
+            return ResponseEntity.ok(result);
+        }
         Map<String, String> stringMap = roleBindingService.validateCurrentUser(token, roleBindingEntity);
         if (stringMap.get("error") != null) {
             result.put("error", stringMap.get("error"));
@@ -197,6 +205,10 @@ public class RoleBindingController {
         Map<String, Object> result = Maps.newHashMap();
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String token = request.getHeader("token");
+        if (!rolesService.isSuperUser(token)) {
+            result.put("error", "User does not have permission to operate");
+            return ResponseEntity.ok(result);
+        }
         Map<String, String> stringMap = roleBindingService.validateCurrentUser(token, roleBindingEntity);
         if (stringMap.get("error") != null) {
             result.put("error", stringMap.get("error"));

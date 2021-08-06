@@ -62,7 +62,7 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('table.actions')" align="center" width="240" class-name="small-padding fixed-width">
+          <el-table-column v-if="isAdminUser()" :label="$t('table.actions')" align="center" width="240" class-name="small-padding fixed-width">
             <template slot-scope="scope">
               <router-link :to="'/management/clusters/' + scope.row.cluster + '/cluster?tab=config'">
                 <el-button type="primary" class="el-icon-edit-outline" size="small">{{ $t('table.edit') }}</el-button>
@@ -210,6 +210,9 @@ export default {
     this.getClusters()
   },
   methods: {
+    isAdminUser() {
+      return this.$store.state.user.permission === 'admin'
+    },
     getClusters() {
       if (this.localList.length > 0) {
         setTimeout(() => {

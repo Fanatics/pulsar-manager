@@ -29,4 +29,6 @@ public interface RolesService {
     Map<String, String> validateCurrentTenant(String token, String tenant);
 
     boolean isSuperUser(String token);
+
+    boolean isSuperReadOnlyUser(String token);
 }

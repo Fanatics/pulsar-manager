@@ -121,7 +121,7 @@ public class EnvironmentsController {
         String token = request.getHeader("token");
         Map<String, Object> result = Maps.newHashMap();
         List<EnvironmentEntity> environmentEntities;
-        if (!rolesService.isSuperUser(token)) {
+        if (!rolesService.isSuperUser(token) && !rolesService.isSuperReadOnlyUser(token)) {
             Optional<UserInfoEntity> userInfoEntityOptional = usersRepository.findByAccessToken(token);
             // There is no need to check whether the user exists again; the user must exist.
             UserInfoEntity userInfoEntity = userInfoEntityOptional.get();

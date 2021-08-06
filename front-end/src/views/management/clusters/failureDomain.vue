@@ -47,9 +47,9 @@
       </el-form-item>
       <el-button type="primary" class="button" @click="handleSelectBrokers()">{{ $t('fd.updateFd') }}</el-button>
     </el-form>
-    <h4 style="color:#E57470">{{ $t('common.dangerZone') }}</h4>
-    <hr class="danger-line">
-    <el-button type="danger" class="button" @click="handleDelete">{{ $t('fd.deleteFd') }}</el-button>
+    <h4 v-if="isAdminUser()" style="color:#E57470">{{ $t('common.dangerZone') }}</h4>
+    <hr v-if="isAdminUser()" class="danger-line">
+    <el-button v-if="isAdminUser()" type="danger" class="button" @click="handleDelete">{{ $t('fd.deleteFd') }}</el-button>
     <el-dialog :visible.sync="dialogFormVisible" :title="textMap[dialogStatus]" width="30%">
       <el-form label-position="top">
         <div v-if="dialogStatus==='delete'">
@@ -113,6 +113,9 @@ export default {
     this.getFailureDomainsList()
   },
   methods: {
+    isAdminUser() {
+      return this.$store.state.user.permission === 'admin'
+    },
     initBrokerValue() {
       getClusterDomainName(this.postForm.cluster, this.postForm.failureDomainName).then(response => {
         if (!response.data) return

@@ -68,6 +68,7 @@
         </el-table>
         <h4>{{ $t('topic.subscription.subscriptions') }}</h4>
         <el-button
+          v-if="isAdminUser()"
           class="filter-item"
           type="success"
           style="margin-bottom: 15px"
@@ -236,6 +237,7 @@
               <span> {{ tag }} </span>
             </div>
             <el-select
+              v-if="isAdminUser()"
               v-model="roleMap[tag]"
               :placeholder="$t('topic.selectRoleMessage')"
               multiple
@@ -252,7 +254,7 @@
           </el-tag>
           <el-form-item style="margin-top:30px">
             <el-input
-              v-if="inputVisible"
+              v-if="inputVisible && isAdminUser()"
               ref="saveTagInput"
               v-model="inputValue"
               style="margin-right:10px;width:200px;vertical-align:top"
@@ -261,13 +263,13 @@
               @keyup.enter.native="handleInputConfirm"
               @blur="handleInputConfirm"
             />
-            <el-button @click="showInput()">{{ $t('topic.addRole') }}</el-button>
+            <el-button v-if="isAdminUser()" @click="showInput()">{{ $t('topic.addRole') }}</el-button>
             <!-- <el-button @click="revokeAllRole()">Revoke All</el-button> -->
           </el-form-item>
         </el-form>
-        <h4 style="color:#E57470">{{ $t('common.dangerZone') }}</h4>
-        <hr class="danger-line">
-        <el-button type="danger" class="button" @click="handleDeletePartitionTopic">{{ $t('topic.deleteTopic') }}</el-button>
+        <h4 v-if="isAdminUser()" style="color:#E57470">{{ $t('common.dangerZone') }}</h4>
+        <hr v-if="isAdminUser()" class="danger-line">
+        <el-button v-if="isAdminUser()" type="danger" class="button" @click="handleDeletePartitionTopic">{{ $t('topic.deleteTopic') }}</el-button>
       </el-tab-pane>
     </el-tabs>
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="30%">
@@ -435,6 +437,9 @@ export default {
     }, 1000)
   },
   methods: {
+    isAdminUser() {
+      return this.$store.state.user.permission === 'admin'
+    },
     getRemoteTenantsList() {
       fetchTenants().then(response => {
         if (!response.data) return

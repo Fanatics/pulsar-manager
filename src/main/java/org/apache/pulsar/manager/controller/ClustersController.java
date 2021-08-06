@@ -80,7 +80,7 @@ public class ClustersController {
         String requestHost = environmentCacheService.getServiceUrl(request);
         String token = request.getHeader("token");
         Map<String, Object> result = Maps.newHashMap();
-        if (!rolesService.isSuperUser(token)) {
+        if (!rolesService.isSuperUser(token) && !rolesService.isSuperReadOnlyUser(token)) {
             result.put("isPage", false);
             result.put("total", 0);
             result.put("data", new ArrayList());

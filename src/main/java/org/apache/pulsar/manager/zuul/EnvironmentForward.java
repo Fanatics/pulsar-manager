@@ -85,7 +85,7 @@ public class EnvironmentForward extends ZuulFilter {
         request.getServletPath();
         String token = request.getHeader("token");
 
-        if (!rolesService.isSuperUser(token)) {
+        if (!rolesService.isSuperUser(token) && !rolesService.isSuperReadOnlyUser(token)) {
             if (!pulsarEvent.validateRoutePermission(requestUri, token)) {
                 ctx.setResponseBody("This operation does not have permission");
                 return null;
