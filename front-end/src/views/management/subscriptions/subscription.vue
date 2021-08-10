@@ -100,7 +100,7 @@
           </el-col>
         </el-row>
       </el-tab-pane>
-      <el-tab-pane :label="$t('topic.backlogOpeartion')" name="backlogOperation">
+      <el-tab-pane v-if="isAdminUser()" :label="$t('topic.backlogOpeartion')" name="backlogOperation">
         <el-tabs v-model="leftActiveName" :tab-position="tabPosition" @tab-click="handleLeftTabClick">
           <el-tab-pane :label="$t('topic.subscription.skip')" name="skip">
             <el-form :inline="true" :model="form">
@@ -297,6 +297,9 @@ export default {
     this.handleStatsInternal()
   },
   methods: {
+    isAdminUser() {
+      return this.$store.state.user.permission === 'admin'
+    },
     generatePartitions() {
       var partitions = parseInt(this.topicPartitions[this.postForm.topic])
       this.partitionsListOptions = []
