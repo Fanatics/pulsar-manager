@@ -82,8 +82,14 @@ public class EnvironmentForward extends ZuulFilter {
         String redirect = request.getParameter("redirect");
 
         String requestUri = request.getServletPath();
-        request.getServletPath();
         String token = request.getHeader("token");
+
+        if(rolesService.isSuperReadOnlyUser(token) && !request.getMethod().equals("GET")) {
+            // readonly users can only to get requests
+            log.error("This operation is not permitted");
+            ctx.setResponseBody("This operation is not permitted");
+            return null;
+        }
 
         if (!rolesService.isSuperUser(token) && !rolesService.isSuperReadOnlyUser(token)) {
             if (!pulsarEvent.validateRoutePermission(requestUri, token)) {

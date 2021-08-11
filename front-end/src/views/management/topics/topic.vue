@@ -321,7 +321,7 @@
               <el-table-column :label="$t('topic.subscription.backlog')" min-width="30px" align="center">
                 <template slot-scope="scope">
                   <span>{{ scope.row.backlog }}</span>
-                  <el-dropdown @command="handleCommand(scope.row.subscription)">
+                  <el-dropdown v-if="isAdminUser()" @command="handleCommand(scope.row.subscription)">
                     <span class="el-dropdown-link"><i class="el-icon-more"/></span>
                     <el-dropdown-menu slot="dropdown">
                       <router-link :to="scope.row.subscriptionLink + '?topTab=backlogOperation&leftTab=skip'" class="link-type">
