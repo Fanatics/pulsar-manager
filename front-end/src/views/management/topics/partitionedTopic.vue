@@ -271,6 +271,12 @@
         <hr v-if="isAdminUser()" class="danger-line">
         <el-button v-if="isAdminUser()" type="danger" class="button" @click="handleDeletePartitionTopic">{{ $t('topic.deleteTopic') }}</el-button>
       </el-tab-pane>
+      <el-tab-pane label="SCHEMA" name="schema">
+        <div v-if="isTopicSchemaPresent()">
+          <vue-json-pretty :data="getTopicSchema()" />
+        </div>
+        <div v-else style="text-align:center"> No Data </div>
+      </el-tab-pane>
     </el-tabs>
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="30%">
       <el-form ref="form" :model="form" :rules="rules" label-position="top">
@@ -320,13 +326,16 @@ import {
   clearBacklogOnCluster,
   getPermissionsOnCluster,
   grantPermissionsOnCluster,
-  revokePermissionsOnCluster
+  revokePermissionsOnCluster,
+  fetchTopicsByPulsarManager,
+  fetchTopicSchemaFromBroker
 } from '@/api/topics'
-import { fetchTopicsByPulsarManager } from '@/api/topics'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import { formatBytes } from '@/utils/index'
 import { numberFormatter } from '@/filters/index'
 import { putSubscriptionOnCluster, deleteSubscriptionOnCluster } from '@/api/subscriptions'
+import VueJsonPretty from 'vue-json-pretty'
+import 'vue-json-pretty/lib/styles.css'
 
 const defaultForm = {
   persistent: '',
@@ -340,7 +349,8 @@ const defaultClusterForm = {
 export default {
   name: 'ParititionTopicInfo',
   components: {
-    Pagination
+    Pagination,
+    VueJsonPretty
   },
   data() {
     return {
@@ -356,6 +366,7 @@ export default {
       partitionsList: [],
       partitionTableKey: 0,
       partitionsListLoading: false,
+      topicSchema: {},
       dynamicTags: [],
       inputVisible: false,
       inputValue: '',
@@ -424,6 +435,7 @@ export default {
     this.getReplicatedClusters()
     this.initTopicStats()
     this.initPermissions()
+    this.fetchTopicSchema()
     let refreshInterval = sessionStorage.getItem('refreshInterval')
     this.autoRefreshInterval = refreshInterval
     setTimeout(() => {
@@ -439,6 +451,31 @@ export default {
   methods: {
     isAdminUser() {
       return this.$store.state.user.permission === 'admin'
+    },
+
+    isTopicSchemaPresent() {
+      return typeof this.topicSchema.data !== 'undefined'
+    },
+
+    isValidJsonSchemaString() {
+      try {
+        return JSON.parse(this.topicSchema.data)
+      } catch (e) {
+        return false
+      }
+    },
+    getTopicSchema() {
+      const schema = this.topicSchema
+      const schemaObject = this.isValidJsonSchemaString()
+      if (schemaObject) {
+        schema.data = schemaObject
+      }
+      return schema
+    },
+    fetchTopicSchema() {
+      fetchTopicSchemaFromBroker(this.tenantNamespaceTopic).then(response => {
+        this.topicSchema = response.data
+      })
     },
     getRemoteTenantsList() {
       fetchTenants().then(response => {
