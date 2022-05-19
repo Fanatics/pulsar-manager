@@ -15,6 +15,7 @@ package org.apache.pulsar.manager.interceptor;
 
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.manager.entity.EnvironmentEntity;
 import org.apache.pulsar.manager.entity.EnvironmentsRepository;
 import org.apache.pulsar.manager.entity.UserInfoEntity;
@@ -35,6 +36,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Component
+@Slf4j
 public class AdminHandlerInterceptor extends HandlerInterceptorAdapter {
 
     private final JwtService jwtService;
@@ -76,7 +78,7 @@ public class AdminHandlerInterceptor extends HandlerInterceptorAdapter {
             response.getWriter().append(gson.toJson(map));
             return false;
         }
-        if (userManagementEnable) {
+        if (userManagementEnable && rolesService.isSuperUser(token)) {
             Optional<UserInfoEntity> optionalUserInfoEntity = usersRepository.findByAccessToken(token);
             if (!optionalUserInfoEntity.isPresent()) {
                 map.put("message", "Please login.");
@@ -117,7 +119,7 @@ public class AdminHandlerInterceptor extends HandlerInterceptorAdapter {
                 return false;
             }
             if (requestUri.startsWith("/admin/v2/tenants")) {
-                if (request.getMethod() != "GET") {
+                if (!request.getMethod().equals("GET")) {
                     map.put("message", "This user no permissions for this resource");
                     response.setStatus(401);
                     response.getWriter().append(gson.toJson(map));
@@ -127,13 +129,15 @@ public class AdminHandlerInterceptor extends HandlerInterceptorAdapter {
             if (requestUri.startsWith("/pulsar-manager/admin/v2/namespaces")
                     || requestUri.startsWith("/pulsar-manager/admin/v2/persistent")
                     || requestUri.startsWith("/pulsar-manager/admin/v2/non-persistent")) {
-                Map<String, String> result = pulsarEvent.validateTenantPermission(requestUri, token);
-                if (result.get("error") != null) {
-                    map.put("message", result.get("error"));
-                    response.setStatus(401);
-                    response.getWriter().append(gson.toJson(map));
-                    return false;
-                }
+               if(!request.getMethod().equals("GET")) {
+                   Map<String, String> result = pulsarEvent.validateTenantPermission(requestUri, token);
+                   if (result.get("error") != null) {
+                       map.put("message", result.get("error"));
+                       response.setStatus(401);
+                       response.getWriter().append(gson.toJson(map));
+                       return false;
+                   }
+               }
             }
         }
         return true;

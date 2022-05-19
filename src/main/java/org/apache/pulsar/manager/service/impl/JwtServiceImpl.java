@@ -79,7 +79,7 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private Date expireTimeFromNow() {
-        return new Date(System.currentTimeMillis() + sessionTime * 1000);
+        return new Date(System.currentTimeMillis() + sessionTime * 1000L);
     }
 
     @Override
