@@ -263,7 +263,7 @@ public class RolesServiceImpl implements RolesService {
 
     public boolean checkSuperUser(String token, int flag) {
         // userManagementEnabled is not enabled or token is from readonly user
-        if (!userManagementEnabled || flag == 2) {
+        if (!userManagementEnabled) {
             HttpServletRequest request = requireNonNull((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
             String serverToken = jwtService.getToken(request.getSession().getId());
             return StringUtils.equalsIgnoreCase(serverToken, token);
@@ -292,6 +292,6 @@ public class RolesServiceImpl implements RolesService {
     }
 
     public boolean isSuperReadOnlyUser(String token) {
-        return checkSuperUser(token, 2);
+        return !checkSuperUser(token, 0);
     }
 }
