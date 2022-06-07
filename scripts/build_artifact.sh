@@ -1,7 +1,7 @@
 #!/bin/sh -xe
 
 version=$1
-if [[ -z $version ]]; then
+if [ -z "$version" ]; then
     version=1.0.0
 fi
 
