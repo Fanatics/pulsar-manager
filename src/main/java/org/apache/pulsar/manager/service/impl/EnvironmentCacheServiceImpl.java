@@ -109,7 +109,7 @@ public class EnvironmentCacheServiceImpl implements EnvironmentCacheService {
             throw new RuntimeException(
                     "No cluster '" + cluster + "' found in environment '" + environment + "'");
         }
-        return clusterData.getServiceUrl();
+        return clusterData.getServiceUrlTls();
     }
 
     @Scheduled(

@@ -93,9 +93,9 @@ public class LocationHeaderRewritingFilter extends ZuulFilter {
                 UriComponents redirectedUriComps = redirectedUriBuilder.build();
 
                 String modifiedLocation = redirectedUriBuilder
-                        .scheme(scheme)
-                        .host(host)
-                        .port(port).replacePath(redirectedUriComps.getPath())
+                        .scheme(originalRequestUri.getScheme())
+                        .host(originalRequestUri.getHost())
+                        .port(originalRequestUri.getPort()).replacePath(redirectedUriComps.getPath())
                         .queryParam("redirect", true)
                         .queryParam("redirect.scheme", redirectedUriComps.getScheme())
                         .queryParam("redirect.host", redirectedUriComps.getHost())
