@@ -36,6 +36,8 @@ plugins {
 repositories {
     mavenCentral()
     mavenLocal()
+    maven { url 'https://build.shibboleth.net/nexus/content/repositories/releases/' }
+    maven { url 'https://repository.mulesoft.org/releases/'}
 }
 
 configurations {
@@ -46,6 +48,10 @@ configurations {
 }
 
 dependencies {
+}
+
+license {
+    excludes(["**/*.jks", "**/*.xml"])
 }
 
 task wrapper(type: Wrapper) {
@@ -86,6 +92,8 @@ distributions {
         contents {
             from 'src/main/resources/application.properties'
             from 'src/main/resources/bkvm.conf'
+            from 'src/main/resources/okta-metadata.xml'
+            from 'src/main/resources/saml/keystore.jks'
         }
     }
 }
@@ -154,6 +162,10 @@ dependencies {
     testCompile group: 'org.mockito', name: 'mockito-core', version: mockitoVersion
     testCompile group: 'org.powermock', name: 'powermock-api-mockito2', version: apiMockitoVersion
     testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: mockitoJunit4Version
+
+    implementation group: 'ca.juliusdavies', name: 'not-yet-commons-ssl', version: '0.3.17'
+    implementation 'org.springframework.security.extensions:spring-security-saml-dsl-core:1.0.5.RELEASE'
+    implementation group: 'org.springframework.security.extensions', name: 'spring-security-saml2-core', version: '1.0.9.RELEASE'
 
     constraints {
         compile("org.bouncycastle:bcprov-jdk15on:${bouncycastleVersion}")
