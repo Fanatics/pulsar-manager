@@ -11,12 +11,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.pulsar.manager.fanatics.security;
 
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.extensions.saml2.config.SAMLConfigurer;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
@@ -29,14 +31,21 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.csrf()
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
 
+        // do not create session
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
+
+        // disable cors
+        http.cors().disable();
+
         http.authorizeRequests()
+                .antMatchers("/index.html").permitAll()
                 .antMatchers("/saml/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .apply(SAMLConfigurer.saml())
                     .serviceProvider()
                     .keyStore()
-                    .storeFilePath("saml/keystore.jks")
+                    .storeFilePath("file:saml/keystore.jks")
                     .password("secret")
                     .keyname("spring")
                     .keyPassword("secret")
@@ -46,7 +55,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .basePath("/")
                 .and()
                     .identityProvider()
-                    .metadataFilePath("okta-metadata.xml")
+                    .metadataFilePath("file:okta_metadata.xml")
                     .and();
     }
 }
