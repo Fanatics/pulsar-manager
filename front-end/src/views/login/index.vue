@@ -18,7 +18,7 @@
 
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
-      <div class="title-container">
+      <!-- <div class="title-container">
         <h3 class="title">{{ $t('login.title') }}</h3>
         <lang-select class="set-language"/>
       </div>
@@ -52,8 +52,8 @@
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">{{ $t('login.logIn') }}</el-button>
-      <el-button :loading="loading" type="primary" style="width:100%;margin-left:0;" @click="loginWithCasdoor">{{ $t('login.casdoor') }}</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">{{ $t('login.logIn') }}</el-button> -->
+      <!-- <el-button :loading="loading" type="primary" style="width:100%;margin-left:0;" @click="loginWithCasdoor">{{ $t('login.casdoor') }}</el-button> -->
       <el-button :loading="loading" type="primary" style="width:100%;margin-left:0;" @click="loginWithOkta">Login with Okta</el-button>
       <!-- <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
               Or connect with
