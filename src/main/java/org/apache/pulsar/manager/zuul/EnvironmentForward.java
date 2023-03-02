@@ -28,6 +28,7 @@ import org.apache.pulsar.manager.service.PulsarAdminService;
 import org.apache.pulsar.manager.service.PulsarEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
 import static org.springframework.cloud.netflix.zuul.filters.support.FilterConstants.PRE_TYPE;
@@ -81,6 +82,11 @@ public class EnvironmentForward extends ZuulFilter {
         request.getServletPath();
         String token = request.getHeader("token");
 
+        // only support get reqests for broker
+        if (!request.getMethod().equals("GET")) {
+            System.out.println("CUD requests are not allowed");
+            return null;
+        }
 
         if (redirect != null && redirect.equals("true")) {
             String redirectScheme = request.getParameter("redirect.scheme");

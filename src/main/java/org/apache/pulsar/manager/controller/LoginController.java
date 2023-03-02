@@ -15,7 +15,7 @@ package org.apache.pulsar.manager.controller;
 
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.digest.DigestUtils;t
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.pulsar.manager.entity.UserInfoEntity;
 import org.apache.pulsar.manager.entity.UsersRepository;
 import org.apache.pulsar.manager.service.JwtService;

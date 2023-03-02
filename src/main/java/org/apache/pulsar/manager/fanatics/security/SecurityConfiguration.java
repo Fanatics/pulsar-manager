@@ -14,6 +14,7 @@
 
 package org.apache.pulsar.manager.fanatics.security;
 
+import org.apache.pulsar.manager.fanatics.saml.SamlUserDetailsService;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -35,14 +36,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
 
         // disable cors
-        http.cors().disable();
-
         http.authorizeRequests()
-                .antMatchers("/index.html").permitAll()
+                .antMatchers("/ui/index.html").permitAll()
+                .antMatchers("/static/**").permitAll()
+                .antMatchers("/pulsar-manager/users/superuser").permitAll()
+                .antMatchers("/pulsar-manager/csrf-token").permitAll()
+                .antMatchers("/pulsar-manager/login").permitAll()
                 .antMatchers("/saml/**").permitAll()
+                .antMatchers("/favicon**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .apply(SAMLConfigurer.saml())
+                .userDetailsService(new SamlUserDetailsService())
                     .serviceProvider()
                     .keyStore()
                     .storeFilePath("file:saml/keystore.jks")

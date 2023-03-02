@@ -53,6 +53,11 @@ public class AdminHandlerInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // allow frontend requests, in case of front-end running on the same process of backend
+        if (request.getServletPath().equals("/") && request.getMethod().equals("GET")) {
+            response.setStatus(302);
+            response.addHeader("Location", "/fpb-manager/okta");
+            return false;
+        }
 
         if (request.getServletPath().startsWith("/ui")
                 || request.getServletPath().startsWith("/static")) {
