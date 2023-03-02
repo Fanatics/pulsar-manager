@@ -131,7 +131,7 @@ export default {
     window.addEventListener('message', this.handleMessage)
     this.handleOktaLogin()
   },
-  
+
   methods: {
     showPwd() {
       if (this.passwordType === 'password') {
@@ -189,11 +189,9 @@ export default {
     loginWithCasdoor() {
       window.location.href = this.getSigninUrl();
     },
-
     loginWithOkta() {
       window.location.href = "/fpb-manager/okta"
-    }
-
+    },
     handleOktaLogin() {
       this.loading = true
       this.$store.dispatch('LoginByOkta', this.loginForm).then(() => {
