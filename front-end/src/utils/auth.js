@@ -26,3 +26,11 @@ export function setToken(token) {
 export function removeToken() {
   return Cookies.remove(TokenKey)
 }
+
+export function getTokenFromLocalStorage() {
+  return localStorage.getItem(TokenKey)
+}
+
+export function removeTokenFromLocalStorage() {
+  return localStorage.removeItem(TokenKey)
+}

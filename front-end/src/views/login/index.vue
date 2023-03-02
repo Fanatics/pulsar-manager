@@ -54,6 +54,7 @@
 
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">{{ $t('login.logIn') }}</el-button>
       <el-button :loading="loading" type="primary" style="width:100%;margin-left:0;" @click="loginWithCasdoor">{{ $t('login.casdoor') }}</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-left:0;" @click="loginWithOkta">Login with Okta</el-button>
       <!-- <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
               Or connect with
             </el-button> -->
@@ -125,9 +126,12 @@ export default {
   destroyed() {
     window.removeEventListener('hashchange', this.afterQRScan)
   },
+
   mounted() {
     window.addEventListener('message', this.handleMessage)
+    this.handleOktaLogin()
   },
+  
   methods: {
     showPwd() {
       if (this.passwordType === 'password') {
@@ -181,8 +185,23 @@ export default {
         setCsrfToken(response.headers['x-csrf-token'])
       })
     },
+
     loginWithCasdoor() {
       window.location.href = this.getSigninUrl();
+    },
+
+    loginWithOkta() {
+      window.location.href = "/fpb-manager/okta"
+    }
+
+    handleOktaLogin() {
+      this.loading = true
+      this.$store.dispatch('LoginByOkta', this.loginForm).then(() => {
+        this.loading = false
+        this.$router.push({ path: this.redirect || '/management/roles' })
+      }).catch(() => {
+        this.loading = false
+      })
     }
   }
 }

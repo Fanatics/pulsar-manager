@@ -12,14 +12,16 @@
  * limitations under the License.
  */
 import { loginByUsername, logout } from '@/api/login'
-import { getToken, setToken, removeToken } from '@/utils/auth'
-import { setName, removeName } from '@/utils/username'
+import { getToken, setToken, removeToken, getTokenFromLocalStorage } from '@/utils/auth'
+import { setName, removeName, getNameFromLocalStorage } from '@/utils/username'
 import { removeEnvironment } from '@/utils/environment'
 import { removeCsrfToken } from '@/utils/csrfToken'
 import { Message } from 'element-ui'
 import { setTenant, removeTenant } from '../../utils/tenant'
 import { getUserInfo } from '@/api/users'
 import { loginByCasdoor } from '../../api/login'
+import { removeTokenFromLocalStorage } from '../../utils/auth'
+import { removeNameFromLocalStorage } from '../../utils/username'
 
 const user = {
   state: {
@@ -102,6 +104,23 @@ const user = {
           reject(error)
         })
       })
+    },
+
+    LoginByOkta({ commit }, code, state) {
+      return new Promise((resolve, reject) => {
+        const token = getTokenFromLocalStorage()
+        const username = getNameFromLocalStorage()
+        if ( token && username ) {
+          commit('SET_TOKEN', token)
+          setToken(token)
+          setName(username)
+          removeTokenFromLocalStorage()
+          removeNameFromLocalStorage()
+          resolve()
+        } else {
+          reject('login error')
+        }
+      });
     },
 
     // 获取用户信息

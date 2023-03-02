@@ -26,3 +26,11 @@ export function setName(name) {
 export function removeName() {
   return Cookies.remove(username)
 }
+
+export function getNameFromLocalStorage() {
+  return localStorage.getItem(username)
+}
+
+export function removeNameFromLocalStorage() {
+  return localStorage.removeItem(username)
+}
