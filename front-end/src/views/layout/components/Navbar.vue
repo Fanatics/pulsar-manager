@@ -44,7 +44,7 @@
 
       <el-dropdown class="avatar-container right-menu-item" trigger="click">
         <span class="avatar-wrapper">
-          Admin<i class="el-icon-arrow-down el-icon--right"/>
+          {{ username }}<i class="el-icon-arrow-down el-icon--right"/>
         </span>
         <el-dropdown-menu slot="dropdown">
           <a target="_blank" href="https://github.com/apache/pulsar">
@@ -70,6 +70,7 @@ import SizeSelect from '@/components/SizeSelect'
 import LangSelect from '@/components/LangSelect'
 import { fetchEnvironments } from '@/api/environments'
 import { setEnvironment, getEnvironment } from '@/utils/environment'
+import { getName } from '@/utils/username'
 
 export default {
   components: {
@@ -85,7 +86,8 @@ export default {
       environmentsListOptions: [{
         'label': 'localhost:8080',
         'value': 'localhost:8080'
-      }]
+      }],
+      username: ''
     }
   },
   computed: {
@@ -99,6 +101,7 @@ export default {
   created() {
     this.getEnvironmentsList()
     this.currentEnv = getEnvironment()
+    this.username = getName()
   },
   methods: {
     toggleSideBar() {
