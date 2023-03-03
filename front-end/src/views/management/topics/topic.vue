@@ -64,7 +64,7 @@
                 <el-table-column :label="$t('topic.data')" prop="data"/>
               </el-table>
               <el-button
-                v-if="isSuperUser()"
+                v-if="superUser"
                 class="filter-item"
                 type="danger"
                 style="margin-top:15px;"
@@ -135,7 +135,7 @@
         </el-row>
         <h4>{{ $t('topic.subscription.subscriptions') }}</h4>
         <el-button
-          v-if="isSuperUser()"
+          v-if="superUser"
           class="filter-item"
           type="success"
           style="margin-bottom: 15px"
@@ -326,7 +326,7 @@
           </el-col>
         </el-row>
       </el-tab-pane>
-      <el-tab-pane v-if="isSuperUser()" :label="$t('tabs.policies')" name="policies">
+      <el-tab-pane v-if="superUser" :label="$t('tabs.policies')" name="policies">
         <h4>{{ $t('topic.policy.authentication') }}
           <el-tooltip :content="authorizationContent" class="item" effect="dark" placement="top">
             <i class="el-icon-info"/>
@@ -520,7 +520,8 @@ export default {
       routeCluster: '',
       loaded: false,
       offloadThreshold: '0K',
-      offloadDisabled: true
+      offloadDisabled: true,
+      superUser: false
     }
   },
   created() {
@@ -571,6 +572,7 @@ export default {
     }
     this.loaded = true
     this.initPermissions()
+    this.superUser = isSuperUser()
   },
   methods: {
     onClusterChanged() {

@@ -68,7 +68,7 @@
         </el-table>
         <h4>{{ $t('topic.subscription.subscriptions') }}</h4>
         <el-button
-          v-if="isSuperUser()"
+          v-if="superUser"
           class="filter-item"
           type="success"
           style="margin-bottom: 15px"
@@ -218,7 +218,7 @@
           </el-col>
         </el-row>
       </el-tab-pane>
-      <el-tab-pane v-if="isSuperUser()" label="POLICIES" name="policies">
+      <el-tab-pane v-if="superUser" label="POLICIES" name="policies">
         <h4>{{ $t('topic.policy.authentication') }}
           <el-tooltip :content="authorizationContent" class="item" effect="dark" placement="top">
             <i class="el-icon-info"/>
@@ -403,7 +403,8 @@ export default {
         expireTime: [{ required: true, message: this.$i18n.t('topic.subscription.expireTimeRequired'), trigger: 'blur' }],
         resetByTime: [{ required: true, message: this.$i18n.t('topic.subscription.resetByTimeRequired'), trigger: 'blur' }]
       },
-      currentSubscription: ''
+      currentSubscription: '',
+      superUser: false
     }
   },
   created() {
@@ -434,7 +435,8 @@ export default {
           this.$refs.autoRefreshSelect.value = refreshInterval
         }, refreshInterval * 1000)
       }
-    }, 1000)
+    }, 1000),
+    this.superUser = isSuperUser()
   },
   methods: {
     getRemoteTenantsList() {

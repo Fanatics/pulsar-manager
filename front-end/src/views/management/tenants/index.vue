@@ -18,7 +18,7 @@
     <div class="filter-container">
       <el-input :placeholder="$t('tenant.searchTenant')" v-model="listQuery.tenant" style="width: 200px;" @keyup.enter.native="handleFilter"/>
       <el-button type="primary" icon="el-icon-search" @click="handleFilter"/>
-      <el-button v-if="isSuperUser()" type="primary" icon="el-icon-plus" @click="handleCreate">{{ $t('tenant.newTenant') }}</el-button>
+      <el-button v-if="superUser" type="primary" icon="el-icon-plus" @click="handleCreate">{{ $t('tenant.newTenant') }}</el-button>
     </div>
 
     <el-row :gutter="24">
@@ -91,7 +91,7 @@
               <span>{{ scope.row.storageSize }}</span>
             </template>
           </el-table-column>
-          <el-table-column v-if="isSuperUser()" :label="$t('table.actions')" align="center" class-name="small-padding fixed-width">
+          <el-table-column v-if="superUser" :label="$t('table.actions')" align="center" class-name="small-padding fixed-width">
             <template slot-scope="scope">
               <router-link :to="'/management/tenants/tenantInfo/' + scope.row.tenant">
                 <el-button type="primary" size="mini">{{ $t('table.edit') }}</el-button>
@@ -192,11 +192,13 @@ export default {
       },
       inputVisible: false,
       inputValue: '',
-      deleteTenantMessage: this.$i18n.t('tenant.deleteTenantMessage')
+      deleteTenantMessage: this.$i18n.t('tenant.deleteTenantMessage'),
+      superUser: false
     }
   },
   created() {
     this.getTenants()
+    this.superUser = isSuperUser()
   },
   methods: {
     getTenants() {

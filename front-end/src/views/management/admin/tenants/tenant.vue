@@ -33,7 +33,7 @@
             style="width: 200px;"
             @keyup.enter.native="handleFilterNamespace"/>
           <el-button type="primary" icon="el-icon-search" @click="handleFilterNamespace"/>
-          <el-button v-if="isSuperUser()" type="primary" icon="el-icon-plus" @click="handleCreateNamespace">{{ $t('namespace.newNamespace') }}</el-button>
+          <el-button v-if="superUser" type="primary" icon="el-icon-plus" @click="handleCreateNamespace">{{ $t('namespace.newNamespace') }}</el-button>
         </div>
         <el-row :gutter="24">
           <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 24}" :lg="{span: 24}" :xl="{span: 24}">
@@ -59,7 +59,7 @@
                   </router-link>
                 </template>
               </el-table-column>
-              <el-table-column v-if="isSuperUser()" :label="$t('table.actions')" align="center" class-name="small-padding fixed-width">
+              <el-table-column v-if="superUser" :label="$t('table.actions')" align="center" class-name="small-padding fixed-width">
                 <template slot-scope="scope">
                   <router-link :to="'/management/namespaces/' + scope.row.tenant +'/' + scope.row.namespace + '/namespace'">
                     <el-button type="primary" size="mini">{{ $t('table.edit') }}</el-button>
@@ -141,12 +141,14 @@ export default {
       },
       tempNamespacesList: [],
       searchNamespace: '',
-      searchList: []
+      searchList: [],
+      superUser: false
     }
   },
   created() {
     this.getRemoteTenantsList()
     this.getNamespacesList()
+    this.superUser = isSuperUser()
   },
   methods: {
     getRemoteTenantsList() {

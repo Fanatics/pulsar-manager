@@ -15,7 +15,7 @@
 -->
 <template>
   <div class="app-container">
-    <el-button v-if="isSuperUser()" type="primary" icon="el-icon-plus" @click="handleCreateToken">{{ $t('token.buttonNewToken') }}</el-button>
+    <el-button v-if="superUser" type="primary" icon="el-icon-plus" @click="handleCreateToken">{{ $t('token.buttonNewToken') }}</el-button>
 
     <el-row :gutter="24">
       <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 24}" :lg="{span: 24}" :xl="{span: 24}" style="margin-top:15px">
@@ -118,11 +118,13 @@ export default {
       description: '',
       rules: {
         token: [{ required: true, message: this.$i18n.t('token.newTokenRequiredMessage'), trigger: 'blur' }]
-      }
+      },
+      superUser: false
     }
   },
   created() {
     this.getTokens()
+    this.superUser = isSuperUser()
   },
   methods: {
     getTokens() {
