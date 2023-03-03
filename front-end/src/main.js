@@ -45,7 +45,7 @@ Object.keys(filters).forEach(key => {
 
 Vue.config.productionTip = false
 
-import Casdoor from 'casdoor-vue-sdk'
+// import Casdoor from 'casdoor-vue-sdk'
 import VueCompositionAPI from '@vue/composition-api'
 const config = {
   serverUrl: "http://localhost:7001",
@@ -55,7 +55,7 @@ const config = {
   redirectPath: "/#callback",
 };
 Vue.use(VueCompositionAPI)
-Vue.use(Casdoor,config)
+// Vue.use(Casdoor,config)
 new Vue({
   el: '#app',
   router,
