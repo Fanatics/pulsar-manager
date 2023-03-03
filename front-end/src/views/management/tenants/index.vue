@@ -18,7 +18,7 @@
     <div class="filter-container">
       <el-input :placeholder="$t('tenant.searchTenant')" v-model="listQuery.tenant" style="width: 200px;" @keyup.enter.native="handleFilter"/>
       <el-button type="primary" icon="el-icon-search" @click="handleFilter"/>
-      <el-button type="primary" icon="el-icon-plus" @click="handleCreate">{{ $t('tenant.newTenant') }}</el-button>
+      <el-button v-if="isSuperUser()" type="primary" icon="el-icon-plus" @click="handleCreate">{{ $t('tenant.newTenant') }}</el-button>
     </div>
 
     <el-row :gutter="24">
@@ -91,7 +91,7 @@
               <span>{{ scope.row.storageSize }}</span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('table.actions')" align="center" class-name="small-padding fixed-width">
+          <el-table-column v-if="isSuperUser()" :label="$t('table.actions')" align="center" class-name="small-padding fixed-width">
             <template slot-scope="scope">
               <router-link :to="'/management/tenants/tenantInfo/' + scope.row.tenant">
                 <el-button type="primary" size="mini">{{ $t('table.edit') }}</el-button>
@@ -153,6 +153,7 @@ import { fetchClusters } from '@/api/clusters'
 import { validateEmpty } from '@/utils/validate'
 import { formatBytes } from '@/utils/index'
 import { numberFormatter } from '@/filters/index'
+import { isSuperUser } from '@/utils/roles'
 
 const defaultForm = {
   cluster: ''

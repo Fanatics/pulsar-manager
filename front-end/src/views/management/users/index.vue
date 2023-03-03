@@ -15,7 +15,7 @@
 -->
 <template>
   <div class="app-container">
-    <el-button type="primary" icon="el-icon-plus" @click="handleCreateUser">{{ $t('user.buttonNewUser') }}</el-button>
+    <el-button v-if="isSuperUser()" type="primary" icon="el-icon-plus" @click="handleCreateUser">{{ $t('user.buttonNewUser') }}</el-button>
 
     <el-row :gutter="24">
       <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 24}" :lg="{span: 24}" :xl="{span: 24}" style="margin-top:15px">
@@ -127,6 +127,7 @@
 <script>
 import { fetchUsers, putUser, deleteUser, updateUser } from '@/api/users'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
+import { isSuperUser } from '@/utils/roles'
 
 export default {
   name: 'UsersInfo',

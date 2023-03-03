@@ -40,7 +40,7 @@
           <el-table-column :label="$t('common.inBytes')" prop="inBytes"/>
           <el-table-column :label="$t('common.outBytes')" prop="outBytes"/>
         </el-table>
-        <h4>
+        <h4 v-if="isSuperUser()">
           Bundles
           <el-tooltip class="item" effect="dark" placement="top">
             <div slot="content">
@@ -57,10 +57,10 @@
             <i class="el-icon-info"/>
           </el-tooltip>
         </h4>
-        <hr class="split-line">
-        <el-tabs v-model="activeBundleCluster" type="border-card" @tab-click="handleBundleTabClick">
+        <hr v-if="isSuperUser()" class="split-line">
+        <el-tabs v-if="isSuperUser()" v-model="activeBundleCluster" type="border-card" @tab-click="handleBundleTabClick">
           <el-tab-pane v-for="(item,index) in replicationClustersValue" :key="item+index" :label="item" :name="item">
-            <div class="filter-container">
+            <div v-if="isSuperUser()" class="filter-container">
               <el-button class="filter-item" style="margin-left: 10px;" type="danger" icon="el-icon-download" @click="handleUnloadAll">Unload All</el-button>
               <el-button class="filter-item" style="margin-left: 10px;" type="danger" icon="el-icon-close" @click="hanldeClearAllBacklog">Clear All Backlog</el-button>
             </div>
@@ -76,7 +76,7 @@
                   <span>{{ scope.row.bundle }}</span>
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('namespace.bundle.operation')" align="center" class-name="small-padding fixed-width">
+              <el-table-column v-if="isSuperUser()" :label="$t('namespace.bundle.operation')" align="center" class-name="small-padding fixed-width">
                 <template slot-scope="scope">
                   <el-button size="medium" style="margin-left: 10px;" type="danger" icon="el-icon-share" @click="handleSplitBundle(scope.row)">{{ $t('namespace.bundle.split') }}</el-button>
                   <el-button size="medium" style="margin-left: 10px;" type="danger" icon="el-icon-download" @click="handleUnloadBundle(scope.row)">{{ $t('namespace.bundle.unload') }}</el-button>
@@ -92,7 +92,7 @@
       <el-tab-pane :label="$t('tabs.topic')" name="topics">
         <el-input v-model="searchTopic" :placeholder="$t('namespace.searchTopics')" style="width: 200px;" @keyup.enter.native="handleFilterTopic"/>
         <el-button type="primary" icon="el-icon-search" @click="handleFilterTopic"/>
-        <el-button type="primary" icon="el-icon-plus" @click="handleCreateTopic">{{ $t('namespace.newTopic') }}</el-button>
+        <el-button v-if="isSuperUser()" type="primary" icon="el-icon-plus" @click="handleCreateTopic">{{ $t('namespace.newTopic') }}</el-button>
         <el-row :gutter="24">
           <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 24}" :lg="{span: 24}" :xl="{span: 24}" style="margin-top:15px">
             <el-table
@@ -159,7 +159,7 @@
           </el-col>
         </el-row>
       </el-tab-pane>
-      <el-tab-pane :label="$t('tabs.policies')" name="policies">
+      <el-tab-pane v-if="isSuperUser()" :label="$t('tabs.policies')" name="policies">
         <h4>{{ $t('namespace.policy.cluster') }}</h4>
         <hr class="split-line">
         <div class="component-item">
