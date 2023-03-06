@@ -272,7 +272,7 @@
       </el-tab-pane>
       <el-tab-pane label="SCHEMA" name="schema">
         <div v-if="isTopicSchemaPresent()">
-          <json-viewer :value="getTopicSchema()"> </json-viewer>
+          <json-viewer :value="getTopicSchema()" copyable> </json-viewer>
         </div>
         <div v-else style="text-align:center"> No Data </div>
       </el-tab-pane>
@@ -462,11 +462,10 @@ export default {
     },
     getTopicSchema() {
       const schema = this.topicSchema
-      // const schemaObject = this.isValidJsonSchemaString()
-      // if (schemaObject) {
-      //   schema.data = schemaObject
-      // }
-      console.log(schema)
+      const schemaObject = this.isValidJsonSchemaString()
+      if (schemaObject) {
+        schema.data = schemaObject
+      }
       return schema
     },
     fetchTopicSchema() {

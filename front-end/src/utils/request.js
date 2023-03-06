@@ -39,7 +39,6 @@ service.interceptors.request.use(
     config.headers['tenant'] = getTenant()
     config.headers['environment'] = getEnvironment()
     config.headers['X-XSRF-TOKEN'] = getCsrfToken()
-    config.headers['X-Requested-With'] = 'XMLHttpRequest';
     return config
   },
   error => {
@@ -53,13 +52,6 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     // const res = response.data
-    console.log(response.status)
-    if ( response.status == 302 ) {
-      store.dispatch('FedLogOut').then(() => {
-        location.reload()
-      })
-      return
-    }
     if (response.status < 500 && response.status >= 200) {
       return response
     } else {
