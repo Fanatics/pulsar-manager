@@ -52,7 +52,7 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     // const res = response.data
-    if ( response.status === 302 && response.headers && response.headers.Location && response.headers.Location.includes('saml') ) {
+    if ( response.status === 302) {
       store.dispatch('FedLogOut').then(() => {
         location.reload()
       })
