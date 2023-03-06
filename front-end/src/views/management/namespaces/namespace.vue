@@ -905,7 +905,7 @@ export default {
       currentTabName: '',
       bundleInfoContent: this.$i18n.t('namespace.bundle.bundleInfoContent')
     },
-    isSuperUser: false
+    superUser: false
   },
   created() {
     this.postForm.tenant = this.$route.params && this.$route.params.tenant
