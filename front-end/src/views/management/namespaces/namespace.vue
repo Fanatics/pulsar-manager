@@ -903,9 +903,9 @@ export default {
         delete: this.$i18n.t('namespace.deleteNamespace')
       },
       currentTabName: '',
-      bundleInfoContent: this.$i18n.t('namespace.bundle.bundleInfoContent')
-    },
-    superUser: false
+      bundleInfoContent: this.$i18n.t('namespace.bundle.bundleInfoContent'),
+      superUser: false
+    }
   },
   created() {
     this.postForm.tenant = this.$route.params && this.$route.params.tenant
