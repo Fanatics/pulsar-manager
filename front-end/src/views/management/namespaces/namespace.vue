@@ -731,7 +731,7 @@ export default {
       tenantNamespace: '',
       tenantsListOptions: [],
       namespacesListOptions: [],
-      activeName: 'overview',
+      activeName: 'topics',
       activeBundleCluster: '',
       namespaceStats: [{
         inMsg: 0,

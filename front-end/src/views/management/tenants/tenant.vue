@@ -96,7 +96,7 @@
           </el-col>
         </el-row>
       </el-tab-pane>
-      <el-tab-pane :label="$t('tabs.configuration')" name="configuration">
+      <el-tab-pane v-if="superUser" :label="$t('tabs.configuration')" name="configuration">
         <el-row :gutter="24">
           <el-col :span="24">
             <div slot="header" class="clearfix">

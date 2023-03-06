@@ -349,7 +349,7 @@ export const asyncRouterMap = [
         meta: {
           title: 'Tokens',
           noCache: true,
-          roles: ['super', 'admin']
+          roles: ['super']
         },
         hidden: false
       }
