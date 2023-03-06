@@ -272,7 +272,7 @@
       </el-tab-pane>
       <el-tab-pane label="SCHEMA" name="schema">
         <div v-if="isTopicSchemaPresent()">
-          <json-viewer :value="getTopicSchema()" copyable> </json-viewer>
+          <json-viewer :value="getTopicSchema()" copyable expanded boxed> </json-viewer>
         </div>
         <div v-else style="text-align:center"> No Data </div>
       </el-tab-pane>
