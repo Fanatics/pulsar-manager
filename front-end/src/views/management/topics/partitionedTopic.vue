@@ -273,9 +273,10 @@
       <el-tab-pane label="SCHEMA" name="schema">
         <div v-if="isTopicSchemaPresent()">
           <json-viewer :value="getTopicSchema()"
-          :expand-depth=10
-          copyable 
-          expanded 
+          :expand-depth='10'
+          :copyable='true'
+          :expanded='true'
+          :show-array-index='false'
           boxed> </json-viewer>
         </div>
         <div v-else style="text-align:center"> No Data </div>
