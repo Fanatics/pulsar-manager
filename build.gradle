@@ -92,8 +92,6 @@ distributions {
         contents {
             from 'src/main/resources/application.properties'
             from 'src/main/resources/bkvm.conf'
-            from 'src/main/resources/okta-metadata.xml'
-            from 'src/main/resources/saml/keystore.jks'
         }
     }
 }
