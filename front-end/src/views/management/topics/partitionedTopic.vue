@@ -325,7 +325,8 @@ import {
   clearBacklogOnCluster,
   getPermissionsOnCluster,
   grantPermissionsOnCluster,
-  revokePermissionsOnCluster
+  revokePermissionsOnCluster,
+  fetchTopicSchemaFromBroker
 } from '@/api/topics'
 import { fetchTopicsByPulsarManager } from '@/api/topics'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
