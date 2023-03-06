@@ -174,31 +174,31 @@ public class UsersController {
         return ResponseEntity.ok(result);
     }
 
-    @ApiOperation(value = "Get user info")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "ok"),
-            @ApiResponse(code = 404, message = "Not found"),
-            @ApiResponse(code = 500, message = "Internal server error")
-    })
-    @RequestMapping(value = "/users/userInfo", method = RequestMethod.GET)
-    public ResponseEntity<Map<String, Object>> getUserInfo() {
-        Map<String, Object> result = Maps.newHashMap();
-        Set<String> roles  = Sets.newHashSet();
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String token = request.getHeader("token");
-        Optional<UserInfoEntity> userInfoEntityOptional = usersRepository.findByAccessToken(token);
-        if (!userInfoEntityOptional.isPresent()) {
-            result.put("error", "User is no exist");
-            return ResponseEntity.ok(result);
-        }
-        UserInfoEntity userInfoEntity = userInfoEntityOptional.get();
-        result.put("message", "Get user info success");
-        result.put("userName", userInfoEntity.getName());
-        result.put("description", userInfoEntity.getDescription());
-        roles.add("super");
-        result.put("roles", roles);
-        return ResponseEntity.ok(result);
-    }
+//    @ApiOperation(value = "Get user info")
+//    @ApiResponses({
+//            @ApiResponse(code = 200, message = "ok"),
+//            @ApiResponse(code = 404, message = "Not found"),
+//            @ApiResponse(code = 500, message = "Internal server error")
+//    })
+//    @RequestMapping(value = "/users/userInfo", method = RequestMethod.GET)
+//    public ResponseEntity<Map<String, Object>> getUserInfo() {
+//        Map<String, Object> result = Maps.newHashMap();
+//        Set<String> roles  = Sets.newHashSet();
+//        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+//        String token = request.getHeader("token");
+//        Optional<UserInfoEntity> userInfoEntityOptional = usersRepository.findByAccessToken(token);
+//        if (!userInfoEntityOptional.isPresent()) {
+//            result.put("error", "User is no exist");
+//            return ResponseEntity.ok(result);
+//        }
+//        UserInfoEntity userInfoEntity = userInfoEntityOptional.get();
+//        result.put("message", "Get user info success");
+//        result.put("userName", userInfoEntity.getName());
+//        result.put("description", userInfoEntity.getDescription());
+//        roles.add("super");
+//        result.put("roles", roles);
+//        return ResponseEntity.ok(result);
+//    }
 
     @ApiOperation(value = "Add a super user, only used when the platform is initialized for the first time.")
     @ApiResponses({

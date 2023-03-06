@@ -80,11 +80,6 @@ public class FanaticsLoginController {
     usersRepository.update(userInfoEntity);
     jwtService.setToken(request.getSession().getId(), token);
 
-    Cookie usernameCookie = new Cookie("username", username);
-    Cookie tokenCookie = new Cookie("Admin-Token", token);
-
-    response.addCookie(usernameCookie);
-    response.addCookie(tokenCookie);
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.TEXT_HTML);
     String res = String.join("\n",//

@@ -33,7 +33,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
 
         // do not create session
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
+        http.sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.NEVER)
+                .invalidSessionUrl("/fpb-manager/okta");
 
         // disable cors
         http.authorizeRequests()
@@ -51,9 +53,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .serviceProvider()
                     .keyStore()
                     .storeFilePath("file:saml/keystore.jks")
-                    .password("secret")
-                    .keyname("spring")
-                    .keyPassword("secret")
+                    .password("changeit")
+                    .keyname("fpb-manager")
+                    .keyPassword("changeit")
                     .and()
                 .protocol("http")
                 .hostname("localhost:7750")
