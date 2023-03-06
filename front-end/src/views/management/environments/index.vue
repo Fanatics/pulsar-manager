@@ -268,11 +268,12 @@
       },
       handleSetEnvironment(environment) {
         setEnvironment(environment)
-        if (this.roles.includes('super')) {
-          this.$router.push({ path: '/management/tenants' })
-        } else {
-          this.$router.push({ path: '/management/admin/tenants/tenantInfo' })
-        }
+        // if (this.roles.includes('super')) {
+        //   this.$router.push({ path: '/management/tenants' })
+        // } else {
+        //   this.$router.push({ path: '/management/admin/tenants/tenantInfo' })
+        // }
+        this.$router.push({ path: '/management/tenants' })
       }
     }
   }
