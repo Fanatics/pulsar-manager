@@ -272,9 +272,7 @@
       </el-tab-pane>
       <el-tab-pane label="SCHEMA" name="schema">
         <div v-if="isTopicSchemaPresent()">
-          <vue-json-pretty :data="{key: 'value'}" />
-          <vue-json-pretty :data="getTopicSchema()" />
-          <json-viewer :value="{key: 'value'}"> </json-viewer>
+          <json-viewer :value="getTopicSchema()"> </json-viewer>
         </div>
         <div v-else style="text-align:center"> No Data </div>
       </el-tab-pane>
@@ -336,8 +334,6 @@ import { formatBytes } from '@/utils/index'
 import { numberFormatter } from '@/filters/index'
 import { putSubscriptionOnCluster, deleteSubscriptionOnCluster } from '@/api/subscriptions'
 import { isSuperUser } from '@/utils/roles'
-import VueJsonPretty from 'vue-json-pretty'
-import 'vue-json-pretty/lib/styles.css'
 import JsonViewer from 'vue-json-viewer'
 
 const defaultForm = {
@@ -353,7 +349,6 @@ export default {
   name: 'ParititionTopicInfo',
   components: {
     Pagination,
-    VueJsonPretty,
     JsonViewer
   },
   data() {
