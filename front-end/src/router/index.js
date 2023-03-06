@@ -99,7 +99,7 @@ export const asyncRouterMap = [
     meta: {
       title: 'Dashboard',
       icon: 'dashboard',
-      roles: ['super']
+      roles:['super', 'admin']
     },
     hidden: true,
     children: [
@@ -135,7 +135,7 @@ export const asyncRouterMap = [
         meta: {
           title: 'Clusters',
           noCache: true,
-          roles: ['super']
+          roles: ['super', 'admin']
         },
         hidden: true
       },
@@ -146,7 +146,7 @@ export const asyncRouterMap = [
         meta: {
           title: 'ClusterInfo',
           noCache: true,
-          roles: ['super']
+          roles: ['super', 'admin']
         },
         hidden: true
       },
@@ -157,7 +157,7 @@ export const asyncRouterMap = [
         meta: {
           title: 'FailureDomainInfo',
           noCache: true,
-          roles: ['super']
+          roles: ['super', 'admin']
         },
         hidden: true
       },
@@ -168,7 +168,7 @@ export const asyncRouterMap = [
         meta: {
           title: 'NamespaceIsolationPolicy',
           noCache: true,
-          roles: ['super']
+          roles: ['super', 'admin']
         },
         hidden: true
       },
@@ -179,7 +179,7 @@ export const asyncRouterMap = [
         meta: {
           title: 'BrokerInfo',
           noCache: true,
-          roles: ['super']
+          roles:['super', 'admin']
         },
         hidden: true
       },
@@ -190,7 +190,7 @@ export const asyncRouterMap = [
         meta: {
           title: 'Tenants',
           noCache: true,
-          roles: ['super']
+          roles: ['super', 'admin']
         }
       },
       {
@@ -200,7 +200,7 @@ export const asyncRouterMap = [
         meta: {
           title: 'TenantInfo',
           noCache: true,
-          roles: ['super']
+          roles: ['super', 'admin']
         },
         hidden: true
       },
@@ -221,7 +221,7 @@ export const asyncRouterMap = [
         meta: {
           title: 'Namespaces',
           noCache: true,
-          roles: ['super']
+          roles: ['super', 'admin']
         }
       },
       {
@@ -230,7 +230,7 @@ export const asyncRouterMap = [
         meta: {
           title: 'Topics',
           noCache: true,
-          roles: ['super']
+          roles: ['super', 'admin']
         }
       },
       {
@@ -272,7 +272,7 @@ export const asyncRouterMap = [
         meta: {
           title: 'Namespaces',
           noCache: true,
-          roles: ['super']
+          roles: ['super', 'admin']
         },
         hidden: true
       },
@@ -294,7 +294,7 @@ export const asyncRouterMap = [
         meta: {
           title: 'Functions',
           noCache: true,
-          roles: ['super']
+          roles: ['super', 'admin']
         },
         hidden: true
       },
@@ -305,7 +305,7 @@ export const asyncRouterMap = [
         meta: {
           title: 'Sources',
           noCache: true,
-          roles: ['super']
+          roles: ['super', 'admin']
         },
         hidden: true
       },
@@ -316,7 +316,7 @@ export const asyncRouterMap = [
         meta: {
           title: 'Sinks',
           noCache: true,
-          roles: ['super']
+          roles: ['super', 'admin']
         },
         hidden: true
       },
@@ -327,7 +327,7 @@ export const asyncRouterMap = [
         meta: {
           title: 'Bookies',
           noCache: true,
-          roles: ['super']
+          roles: ['super', 'admin']
         },
         hidden: true
       },
@@ -338,7 +338,7 @@ export const asyncRouterMap = [
         meta: {
           title: 'Users',
           noCache: true,
-          roles: ['super']
+          roles: ['super', 'admin']
         },
         hidden: true
       },
