@@ -52,7 +52,8 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     // const res = response.data
-    if ( response.status === 302) {
+    console.log(response.status)
+    if ( response.status == 302 ) {
       store.dispatch('FedLogOut').then(() => {
         location.reload()
       })

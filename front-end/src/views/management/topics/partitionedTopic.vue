@@ -467,6 +467,7 @@ export default {
       if (schemaObject) {
         schema.data = schemaObject
       }
+      console.log(schema)
       return schema
     },
     fetchTopicSchema() {
