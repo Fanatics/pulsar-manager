@@ -39,6 +39,7 @@ service.interceptors.request.use(
     config.headers['tenant'] = getTenant()
     config.headers['environment'] = getEnvironment()
     config.headers['X-XSRF-TOKEN'] = getCsrfToken()
+    config.headers['X-Requested-With'] = 'XMLHttpRequest';
     return config
   },
   error => {
