@@ -165,6 +165,9 @@ dependencies {
     implementation 'org.springframework.security.extensions:spring-security-saml-dsl-core:1.0.5.RELEASE'
     implementation group: 'org.springframework.security.extensions', name: 'spring-security-saml2-core', version: '1.0.9.RELEASE'
 
+    // https://mvnrepository.com/artifact/mysql/mysql-connector-java
+    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.29'
+
     constraints {
         compile("org.bouncycastle:bcprov-jdk15on:${bouncycastleVersion}")
         compile("org.bouncycastle:bcprov-ext-jdk15on:${bouncycastleVersion}")
