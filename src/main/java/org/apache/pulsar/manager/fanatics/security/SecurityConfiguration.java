@@ -60,7 +60,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .and()
                 .protocol("https")
                 .hostname(String.format("pubsubmanager.%s.frgcloud.com", System.getenv("SHORT_ENV_GROUP")))
-                .basePath("/fpb-manager/okta")
+                .basePath("/")
                 .and()
                     .identityProvider()
                     .metadataFilePath("file:okta_metadata.xml")
