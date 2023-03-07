@@ -58,7 +58,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .keyPassword("secret")
                     .and()
                 .protocol("https")
-                .hostname(System.getenv("APP_DOMAIN"))
+                .hostname(System.getenv("APP_DOMAIN") + ":8443")
                 .basePath("/")
                 .and()
                     .identityProvider()
