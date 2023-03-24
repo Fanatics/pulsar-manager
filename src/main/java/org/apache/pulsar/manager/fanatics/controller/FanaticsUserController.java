@@ -22,6 +22,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.apache.pulsar.manager.entity.UserInfoEntity;
 import org.apache.pulsar.manager.entity.UsersRepository;
+import org.apache.pulsar.manager.fanatics.utils.UserUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -67,11 +68,9 @@ public class FanaticsUserController {
         result.put("userName", userInfoEntity.getName());
         result.put("description", userInfoEntity.getDescription());
 
-        SecurityContextHolder.getContext().getAuthentication().getAuthorities().forEach(grantedAuthority -> {
-            if (grantedAuthority.getAuthority().equals(platforms_group)) {
-                roles.add("super");
-            }
-        });
+        if (UserUtils.isSuperUser()) {
+            roles.add("super");
+        }
 
         roles.add("admin");
         result.put("roles", roles);

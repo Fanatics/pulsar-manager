@@ -38,6 +38,7 @@ repositories {
     mavenLocal()
     maven { url 'https://build.shibboleth.net/nexus/content/repositories/releases/' }
     maven { url 'https://repository.mulesoft.org/releases/'}
+    maven { url 'http://repo.fanaticslabs.com/artifactory/all-maven-repos' }
 }
 
 configurations {
@@ -167,6 +168,13 @@ dependencies {
 
     // https://mvnrepository.com/artifact/mysql/mysql-connector-java
     implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.29'
+
+    // dcs
+    compile("com.fanatics.platform:dynamic-config-java-client:0.3.5-SNAPSHOT"){transitive = false}
+    compile ("com.fanatics.argos.java:argos-logger:0.6.0-SNAPSHOT") {
+        exclude group: 'com.googlecode', module: '*'
+    }
+//    compile "com.fanatics.argos.java:argos-publisher:0.6.0-SNAPSHOT"
 
     constraints {
         compile("org.bouncycastle:bcprov-jdk15on:${bouncycastleVersion}")

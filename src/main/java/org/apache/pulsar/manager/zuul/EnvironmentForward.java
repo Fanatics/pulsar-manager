@@ -21,8 +21,11 @@ import java.net.URL;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.pulsar.manager.fanatics.dcs.UserTopicPermissionReader;
+import org.apache.pulsar.manager.fanatics.utils.UserUtils;
 import org.apache.pulsar.manager.service.EnvironmentCacheService;
 import org.apache.pulsar.manager.service.PulsarAdminService;
 import org.apache.pulsar.manager.service.PulsarEvent;
@@ -47,13 +50,16 @@ public class EnvironmentForward extends ZuulFilter {
 
     private final PulsarAdminService pulsarAdminService;
 
+    private final UserTopicPermissionReader userTopicPermissionReader;
+
     @Autowired
     public EnvironmentForward(
             EnvironmentCacheService environmentCacheService, PulsarEvent pulsarEvent,
-            PulsarAdminService pulsarAdminService) {
+            PulsarAdminService pulsarAdminService, UserTopicPermissionReader userTopicPermissionReader) {
         this.environmentCacheService = environmentCacheService;
         this.pulsarEvent = pulsarEvent;
         this.pulsarAdminService = pulsarAdminService;
+        this.userTopicPermissionReader = userTopicPermissionReader;
     }
 
     @Override
@@ -71,6 +77,7 @@ public class EnvironmentForward extends ZuulFilter {
         return true;
     }
 
+    @SneakyThrows
     @Override
     public Object run() {
 
@@ -79,13 +86,21 @@ public class EnvironmentForward extends ZuulFilter {
         String redirect = request.getParameter("redirect");
 
         String requestUri = request.getServletPath();
-        request.getServletPath();
-        String token = request.getHeader("token");
+        String username = request.getHeader("username");
 
-        // only support get reqests for broker
-        if (!request.getMethod().equals("GET")) {
-            System.out.println("CUD requests are not allowed");
-            return null;
+        // only support get requests for broker
+        if (!request.getMethod().equals("GET") && !UserUtils.isSuperUser()) {
+            // check if it is clear backlog call
+            if (requestUri.endsWith("skip_all")) {
+                String path = requestUri;
+                path = path.replace("/admin/v2/persistent/", "").replace("/skip_all", "");
+                String[] pathSplit = path.split("/subscription/");
+                if (pathSplit.length != 2 || !userTopicPermissionReader.hasClearBacklogPermission(username, pathSplit[0], pathSplit[1])) {
+                    return null;
+                }
+            } else  {
+                return null;
+            }
         }
 
         if (redirect != null && redirect.equals("true")) {
