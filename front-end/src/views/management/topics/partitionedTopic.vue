@@ -854,6 +854,7 @@ export default {
           duration: 3000
         })
         this.dialogFormVisible = false
+        
       })
     },
     onAutoRefreshChanged(val) {

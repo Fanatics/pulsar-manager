@@ -101,8 +101,8 @@ public class EnvironmentForward extends ZuulFilter {
             } else if (requestUri.endsWith("schema")) {
                 String topic = requestUri.replace("/admin/v2/schemas/", "").replace("/schema", "");
                 if (!userTopicPermissionReader.hasDeleteSchemaPermission(username, topic)) {
-                    return null;
-                }
+                   return null;
+               }
             }
             else  {
                 return null;
