@@ -853,6 +853,7 @@ export default {
           type: 'success',
           duration: 3000
         })
+        this.dialogFormVisible = false
       })
     },
     onAutoRefreshChanged(val) {

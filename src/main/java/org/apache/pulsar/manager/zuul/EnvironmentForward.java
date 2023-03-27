@@ -98,7 +98,13 @@ public class EnvironmentForward extends ZuulFilter {
                 if (pathSplit.length != 2 || !userTopicPermissionReader.hasClearBacklogPermission(username, pathSplit[0], pathSplit[1])) {
                     return null;
                 }
-            } else  {
+            } else if (requestUri.endsWith("schema")) {
+                String topic = requestUri.replace("/admin/v2/schemas/", "").replace("/schema", "");
+                if (!userTopicPermissionReader.hasDeleteSchemaPermission(username, topic)) {
+                    return null;
+                }
+            }
+            else  {
                 return null;
             }
         }
