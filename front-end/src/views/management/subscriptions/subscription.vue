@@ -554,13 +554,6 @@ export default {
           type: 'success',
           duration: 3000
         })
-      }).catch (() => {
-        this.$notify({
-          title: 'error',
-          message: "failed to clear backlog, may be user doesn't have required permission",
-          type: 'error',
-          duration: 3000
-        })
       })
     },
     handleResetCursorByTime() {

@@ -790,7 +790,6 @@ export default {
         this.dialogFormVisible = false
         this.getPartitionTopicInfo()
       }).catch(() => {
-        console.log("failed clear backlog messages")
         this.dialogFormVisible = false
       })
     },
