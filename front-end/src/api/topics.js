@@ -473,3 +473,10 @@ export function fetchTopicSchemaFromBroker(tenantNamespaceTopic) {
     method: 'get'
   })
 }
+
+export function deleteTopicSchemaFromBroker(tenantNamespaceTopic) {
+  return request({
+    url: BASE_URL_V2 + `/schemas/${tenantNamespaceTopic}/schema`,
+    method: 'delete'
+  })
+}

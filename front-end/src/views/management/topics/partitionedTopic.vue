@@ -272,6 +272,8 @@
       </el-tab-pane>
       <el-tab-pane label="SCHEMA" name="schema">
         <div v-if="isTopicSchemaPresent()">
+          <el-button type="danger" class="button" @click="handleDeleteSchema">Delete Schema</el-button>
+          <hr/>
           <json-viewer :value="getTopicSchema()"
           :expand-depth='10'
           :copyable='true'
@@ -310,6 +312,9 @@
         <el-form-item v-if="dialogStatus==='unsub'">
           <h4>{{ $t('topic.subscription.deleteSubConfirm') }}</h4>
         </el-form-item>
+         <el-form-item v-if="dialogStatus==='deleteSchema'">
+          <h4>Delete Schema of the topic! Are you sure ? </h4>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handleOptions()">{{ $t('table.confirm') }}</el-button>
           <el-button @click="dialogFormVisible=false">{{ $t('table.cancel') }}</el-button>
@@ -331,7 +336,8 @@ import {
   getPermissionsOnCluster,
   grantPermissionsOnCluster,
   revokePermissionsOnCluster,
-  fetchTopicSchemaFromBroker
+  fetchTopicSchemaFromBroker,
+  deleteTopicSchemaFromBroker
 } from '@/api/topics'
 import { fetchTopicsByPulsarManager } from '@/api/topics'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
@@ -700,6 +706,11 @@ export default {
       this.dialogFormVisible = true
       this.dialogStatus = 'delete'
     },
+    handleDeleteSchema() {
+      this.postForm.expireTime = ''
+      this.dialogFormVisible = true
+      this.dialogStatus = 'deleteSchema'
+    },
     deleteParititionTopic() {
       deletePartitionTopicOnCluster(this.getCurrentCluster(), this.postForm.persistent, this.tenantNamespaceTopic).then(response => {
         this.$notify({
@@ -732,6 +743,9 @@ export default {
               break
             case 'unsub':
               this.deleteSub()
+              break
+            case 'deleteSchema':
+              this.deleteSchema()
               break
           }
         }
@@ -829,6 +843,16 @@ export default {
         })
         this.initTopicStats()
         this.dialogFormVisible = false
+      })
+    },
+    deleteSchema() {
+      deleteTopicSchemaFromBroker(this.tenantNamespaceTopic).then(response => {
+        this.$notify({
+          title: 'success',
+          message: "schema deleted successfuly",
+          type: 'success',
+          duration: 3000
+        })
       })
     },
     onAutoRefreshChanged(val) {
