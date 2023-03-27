@@ -21,6 +21,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.saml.SAMLCredential;
 import org.springframework.security.saml.userdetails.SAMLUserDetailsService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,7 +32,10 @@ public class SamlUserDetailsService implements SAMLUserDetailsService {
         String userID = credential.getNameID().getValue();
         userID = userID.split("@")[0];
         String [] authorities = credential.getAttributeAsStringArray("Groups");
-        List<GrantedAuthority> grantedAuthorities = Arrays.stream(authorities).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        if (authorities != null) {
+            grantedAuthorities = Arrays.stream(authorities).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        }
         return new User(userID, "", true, true, true, true, grantedAuthorities);
     }
 }

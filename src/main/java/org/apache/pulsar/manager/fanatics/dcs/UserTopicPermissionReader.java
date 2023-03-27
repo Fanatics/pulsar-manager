@@ -47,9 +47,6 @@ public class UserTopicPermissionReader {
         String config = String.format("schema/%s/pulsar-manager.yml", topic);
         configEntry.setConfig(config);
         DcsConfig dcsConfig = dcsRestClient.getLatest(configEntry).get();
-        UserTopicPermissions userTopicPermissions = dcsConfig.toObject(UserTopicPermissions.class);
-        System.out.println(userTopicPermissions.getClear_backlog());
-        System.out.println(userTopicPermissions.getDelete_schema());
-        return userTopicPermissions;
+        return dcsConfig.toObject(UserTopicPermissions.class);
     }
 }
