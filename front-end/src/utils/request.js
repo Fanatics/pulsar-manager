@@ -97,6 +97,16 @@ service.interceptors.response.use(
       type: 'error',
       duration: 5 * 1000
     })
+
+    const notifier = require('node-notifier')
+
+    notifier.notify({
+      title: "error",
+      message: message,
+      type: "error",
+      duration: 3000
+    })
+
     return Promise.reject(error)
   }
 )
