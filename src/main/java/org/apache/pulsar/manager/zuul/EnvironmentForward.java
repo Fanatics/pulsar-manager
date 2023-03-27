@@ -129,6 +129,11 @@ public class EnvironmentForward extends ZuulFilter {
     private Object forwardRequest(RequestContext ctx, HttpServletRequest request, String serviceUrl) {
         ctx.put(REQUEST_URI_KEY, request.getServletPath());
         try {
+            // always forward request to https
+            if (serviceUrl.contains("8080")) {
+                serviceUrl = serviceUrl.replace("8080", "8443").replace("http", "https");
+            }
+
             Map<String, String> authHeader = pulsarAdminService.getAuthHeader(serviceUrl);
             authHeader.entrySet().forEach(entry -> ctx.addZuulRequestHeader(entry.getKey(), entry.getValue()));
             ctx.setRouteHost(new URL(serviceUrl));
