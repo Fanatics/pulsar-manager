@@ -79,17 +79,15 @@ service.interceptors.response.use(
         })
         return
       }
-    } else if (error.response.data.hasOwnProperty('reason')) {
+    } else if (error.response.status === 500) {
+      message = "failed to perform operation! may be user doesn't have permission"
+    }  else if (error.response.data.hasOwnProperty('reason')) {
       message = error.response.data.reason
     } else {
       message = error.response.data
       if (message.indexOf('Trying to subscribe with incompatible') >= 0) {
         message = 'Incompatible schema detected while heartbeating'
       }
-    }
-
-    if (error.response.status === 500) {
-      message = "failed to perform operation! may be user doesn't have permission"
     }
 
     Message({
