@@ -89,7 +89,8 @@ public class EnvironmentForward extends ZuulFilter {
         String username = request.getHeader("username");
 
         // only support get requests for broker
-        if (!request.getMethod().equals("GET") && !UserUtils.isSuperUser()) {
+        // for normal users support CUD requests only for dev and qc
+        if (!request.getMethod().equals("GET") && !UserUtils.isSuperUser() && System.getenv("SHORT_ENV_GROUP") != null && !System.getenv("SHORT_ENV_GROUP").equals("prod")) {
             // check if it is clear backlog call
             if (requestUri.endsWith("skip_all")) {
                 String path = requestUri;
