@@ -91,8 +91,7 @@ dependencyManagement {
 distributions {
     main {
         contents {
-            from 'src/main/resources/application.properties'
-            from 'src/main/resources/bkvm.conf'
+            from 'src/main/resources/*'
         }
     }
 }
@@ -174,7 +173,6 @@ dependencies {
     compile ("com.fanatics.argos.java:argos-logger:0.6.0-SNAPSHOT") {
         exclude group: 'com.googlecode', module: '*'
     }
-//    compile "com.fanatics.argos.java:argos-publisher:0.6.0-SNAPSHOT"
 
     constraints {
         compile("org.bouncycastle:bcprov-jdk15on:${bouncycastleVersion}")

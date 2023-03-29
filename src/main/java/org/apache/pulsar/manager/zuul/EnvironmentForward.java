@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.pulsar.manager.fanatics.argos.FanaticsArgosLogger;
 import org.apache.pulsar.manager.fanatics.dcs.UserTopicPermissionReader;
 import org.apache.pulsar.manager.fanatics.utils.UserUtils;
 import org.apache.pulsar.manager.service.EnvironmentCacheService;
@@ -31,7 +32,6 @@ import org.apache.pulsar.manager.service.PulsarAdminService;
 import org.apache.pulsar.manager.service.PulsarEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
 import static org.springframework.cloud.netflix.zuul.filters.support.FilterConstants.PRE_TYPE;
@@ -96,14 +96,24 @@ public class EnvironmentForward extends ZuulFilter {
                 String path = requestUri;
                 path = path.replace("/admin/v2/persistent/", "").replace("/skip_all", "");
                 String[] pathSplit = path.split("/subscription/");
-                if (pathSplit.length != 2 || !userTopicPermissionReader.hasClearBacklogPermission(username, pathSplit[0], pathSplit[1])) {
+                if (pathSplit.length == 2) {
+                    if(!userTopicPermissionReader.hasClearBacklogPermission(username, pathSplit[0], pathSplit[1])) {
+                        return null;
+                    }
+                    String logMessage = String.format("Request: clear_backlog, user: %s, topic: %s, subscription: %s", username, pathSplit[0], pathSplit[1]);
+                    log.info(logMessage);
+                    FanaticsArgosLogger.logInfo(logMessage, username);
+                } else {
                     return null;
                 }
             } else if (requestUri.endsWith("schema")) {
                 String topic = requestUri.replace("/admin/v2/schemas/", "").replace("/schema", "");
                 if (!userTopicPermissionReader.hasDeleteSchemaPermission(username, topic)) {
                    return null;
-               }
+                }
+                String logMessage = String.format("Request: delete_schema, user: %s, topic: %s", username, topic);
+                log.info(logMessage);
+                FanaticsArgosLogger.logInfo(logMessage, username);
             }
             else  {
                 return null;
