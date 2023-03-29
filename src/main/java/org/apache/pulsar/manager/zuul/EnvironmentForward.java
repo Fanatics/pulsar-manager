@@ -90,14 +90,14 @@ public class EnvironmentForward extends ZuulFilter {
 
         // only support get requests for broker
         // for normal users support CUD requests only for dev and qc
-        if (!request.getMethod().equals("GET") && !UserUtils.isSuperUser() && System.getenv("SHORT_ENV_GROUP") != null && !System.getenv("SHORT_ENV_GROUP").equals("prod")) {
+        if (!request.getMethod().equals("GET") && System.getenv("SHORT_ENV_GROUP") != null && !System.getenv("SHORT_ENV_GROUP").equals("prod")) {
             // check if it is clear backlog call
             if (requestUri.endsWith("skip_all")) {
                 String path = requestUri;
                 path = path.replace("/admin/v2/persistent/", "").replace("/skip_all", "");
                 String[] pathSplit = path.split("/subscription/");
                 if (pathSplit.length == 2) {
-                    if(!userTopicPermissionReader.hasClearBacklogPermission(username, pathSplit[0], pathSplit[1])) {
+                    if(!UserUtils.isSuperUser() && !userTopicPermissionReader.hasClearBacklogPermission(username, pathSplit[0], pathSplit[1])) {
                         return null;
                     }
                     String logMessage = String.format("Request: clear_backlog, user: %s, topic: %s, subscription: %s", username, pathSplit[0], pathSplit[1]);
@@ -108,7 +108,7 @@ public class EnvironmentForward extends ZuulFilter {
                 }
             } else if (requestUri.endsWith("schema")) {
                 String topic = requestUri.replace("/admin/v2/schemas/", "").replace("/schema", "");
-                if (!userTopicPermissionReader.hasDeleteSchemaPermission(username, topic)) {
+                if (!UserUtils.isSuperUser() && !userTopicPermissionReader.hasDeleteSchemaPermission(username, topic)) {
                    return null;
                 }
                 String logMessage = String.format("Request: delete_schema, user: %s, topic: %s", username, topic);
