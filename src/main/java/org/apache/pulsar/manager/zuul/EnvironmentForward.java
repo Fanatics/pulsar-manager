@@ -89,8 +89,12 @@ public class EnvironmentForward extends ZuulFilter {
         String username = request.getHeader("username");
 
         // only support get requests for broker
-        // for normal users support CUD requests only for dev and qc
-        if (!request.getMethod().equals("GET") && System.getenv("SHORT_ENV_GROUP") != null && !System.getenv("SHORT_ENV_GROUP").equals("prod")) {
+        if (!request.getMethod().equals("GET")) {
+            // for normal users CUD are permitted only on dev
+            if(!System.getenv("SHORT_ENV_GROUP").equals("dev") && !UserUtils.isSuperUser()) {
+                return null;
+            }
+
             // check if it is clear backlog call
             if (requestUri.endsWith("skip_all")) {
                 String path = requestUri;
@@ -115,7 +119,7 @@ public class EnvironmentForward extends ZuulFilter {
                 log.info(logMessage);
                 FanaticsArgosLogger.logInfo(logMessage, username);
             }
-            else  {
+            else if (!UserUtils.isSuperUser()) {
                 return null;
             }
         }
