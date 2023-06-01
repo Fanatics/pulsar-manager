@@ -279,6 +279,7 @@
           :copyable='true'
           :expanded='true'
           :show-array-index='false'
+          :copyable='true'
           boxed> </json-viewer>
         </div>
         <div v-else style="text-align:center"> No Data </div>
