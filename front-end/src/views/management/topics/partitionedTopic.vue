@@ -276,10 +276,8 @@
           <hr/>
           <json-viewer :value="getTopicSchema()"
           :expand-depth='10'
-          :copyable='true'
-          :expanded='true'
-          :show-array-index='false'
-          :copyable='true'
+          copyable
+          expanded
           boxed> </json-viewer>
         </div>
         <div v-else style="text-align:center"> No Data </div>
