@@ -46,9 +46,11 @@ public class UserTopicPermissionReader {
         ConfigEntry configEntry = dcsClientFactory.getDcsClientConfig().getBase();
         // get main topic name from DLQ topic
         if (topic.endsWith("-DLQ")) {
+            log.info("============== Found DLQ topic: " + topic + " ================");
             String[] topicSplit = topic.split("/");
             String mainTopic = topicSplit[topicSplit.length - 1].split("-")[0];
             topic = String.format("%s/%s/%s", topicSplit[0], topicSplit[1], mainTopic);
+            log.info("============= Using main topic for checking permissions " + topic + " ==================");
         }
 
         String config = String.format("schema/%s/pulsar-manager.yml", topic);

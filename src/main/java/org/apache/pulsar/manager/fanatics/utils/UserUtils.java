@@ -20,11 +20,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class UserUtils {
     private static final String platforms_group = "Application Platforms Team";
     public static boolean isSuperUser() {
-        for (GrantedAuthority grantedAuthority : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
-            if (grantedAuthority.getAuthority().equals(platforms_group)) {
-                return true;
-            }
-        }
+//        for (GrantedAuthority grantedAuthority : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
+//            if (grantedAuthority.getAuthority().equals(platforms_group)) {
+//                return true;
+//            }
+//        }
         return false;
     }
 }
