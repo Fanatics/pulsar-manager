@@ -44,6 +44,13 @@ public class UserTopicPermissionReader {
     private UserTopicPermissions getUserTopicPermissions(String topic) throws IOException {
         DcsRestClient dcsRestClient = dcsClientFactory.getDcsRestClient();
         ConfigEntry configEntry = dcsClientFactory.getDcsClientConfig().getBase();
+        // get main topic name from DLQ topic
+        if (topic.endsWith("-DLQ")) {
+            String[] topicSplit = topic.split("/");
+            String mainTopic = topicSplit[topicSplit.length - 1].split("-")[0];
+            topic = String.format("%s/%s/%s", topicSplit[0], topicSplit[1], mainTopic);
+        }
+
         String config = String.format("schema/%s/pulsar-manager.yml", topic);
         configEntry.setConfig(config);
         DcsConfig dcsConfig = dcsRestClient.getLatest(configEntry).get();
